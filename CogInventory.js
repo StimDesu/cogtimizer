@@ -266,11 +266,21 @@ class CogInventory {
       } else if (c.startsWith("CogCry")) {
         icon.type = "cog";
         const parsed = c.match(/^CogCry([0-5])$/);
-        icon.path = "icons/cogs/" + "Crystal_" + Crystal_MAP[parsed[1]] + ".png";        
+        icon.path = "icons/cogs/" + "Crystal_" + Crystal_MAP[parsed[1]] + ".png";
+      } else if (c.startsWith("CogSm")) {
+        // W7 "small" cogs (CogSm[_ab][0-9]). Sprite name matches the icon key,
+        // so map directly. These only appear in CogO (not CogM) today, but the
+        // real per-variant icons are shipped so they render if that changes.
+        icon.type = "cog";
+        icon.path = "icons/cogs/" + c + ".png";
       } else {
         icon.type = "cog";
         const parsed=c.match(/^Cog([0123YZ])(.{2,3})$/);
-        if(parsed[1] === "Z") {
+        if(!parsed) {
+          // Unknown/new icon code: degrade to blank instead of crashing.
+          icon.type = "blank";
+          icon.path = "assets/cog_blank.png";
+        } else if(parsed[1] === "Z") {
           icon.path = "icons/cogs/" + YIN_MAP[parsed[2]] + ".png";
         } else {
           icon.path = "icons/cogs/" + ICON_TYPE_MAP[parsed[2]] + "_" + ICON_QUALITY_MAP[parsed[1]] + ".png";
