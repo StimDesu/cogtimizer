@@ -201,6 +201,9 @@
 
       window.boardRenderer = new BoardRenderer(ROWS, COLUMNS, "board");
       window.spareRenderer = new BoardRenderer(40, 3, "spare", 5);
+      // W7 tiny-cog side strips: 12 slots each, flanking the main board.
+      window.smallLeftRenderer = new BoardRenderer(12, 1, "smallLeft", 12);
+      window.smallRightRenderer = new BoardRenderer(12, 1, "smallRight", 12);
       window.solver = new Solver();
       window.cogInvetory = new CogInventory();
 
@@ -212,7 +215,12 @@
       const boardElem = document.getElementById("currentBoard");
       boardElem.innerHTML = "";
       // boardElem.appendChild(table);
-      boardElem.appendChild(window.boardRenderer.createHTMLElement());
+      const boardRow = createElem("div");
+      boardRow.className = "board-with-sides";
+      boardRow.appendChild(window.smallLeftRenderer.createHTMLElement());
+      boardRow.appendChild(window.boardRenderer.createHTMLElement());
+      boardRow.appendChild(window.smallRightRenderer.createHTMLElement());
+      boardElem.appendChild(boardRow);
 
       const stepContainer = createElem("div");
       stepContainer.id = "stepspage";
@@ -276,9 +284,17 @@
         console.log("Board updated");
       }
 
+      f.printSmallCogs = (inventory) => {
+        // Left strip = slots 228-239, right strip = 240-251 (one per row).
+        for (let row = 0; row < 12; row++) {
+          window.smallLeftRenderer.set(row, 0, inventory.smallCogs[228 + row]);
+          window.smallRightRenderer.set(row, 0, inventory.smallCogs[240 + row]);
+        }
+      }
+
       f.printSpare = (inventory) => {
         for (let i = 108; i < 200; i++) {
-          const cog = inventory.cogs[i];
+          const cog = inventory.cogs[i] || inventory.smallCogs[i];
           const index = (i - 108);
           const row = Math.floor(index / 3);
           const col = index % 3;
@@ -393,15 +409,17 @@
         document.getElementById("flaggyShop").value = cogInvetory.flaggyShopUpgrades;
         sparePage.goto(0);
         for (let i = 108; i < 200; i++) {
-          if (!cogInvetory.cogs[i]) continue;
+          const cog = cogInvetory.cogs[i] || cogInvetory.smallCogs[i];
+          if (!cog) continue;
           const index = (i - 108);
           const row = Math.floor(index / 3); // 3 since the spare board has 3 columns per row
           const col = index % 3;
-          window.spareRenderer.set(row, col, cogInvetory.cogs[i]);
+          window.spareRenderer.set(row, col, cog);
         };
 
         const initScore = cogInvetory.score;
         f.printBoard(cogInvetory.board);
+        f.printSmallCogs(cogInvetory);
 
         document.getElementById("solve").disabled = "";
         document.getElementById("steps").innerHTML = "";
@@ -565,6 +583,6 @@
       document.getElementById("cogbtn").addEventListener("click", () => {
         openCogTab();
       });
-    </script>
+</script>
   </body>
 </html>

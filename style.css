@@ -276,9 +276,9 @@ table.cogboard tr > td > div {
 table.cogboard tr > td {
     position: relative;
     display: inline-block;
-    height: 36px;
-    width: 36px;
-    max-width: 36px;
+    height: 45px;
+    width: 45px;
+    max-width: 45px;
 
     margin: 0 7px 6px 0;
     border: 1px solid black;
@@ -319,6 +319,32 @@ table.cogboard tr > td {
 #currentBoard {
     padding: 1em 0 0 1em;
     border-right: 4px solid #b47848;
+}
+
+.board-with-sides {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 4px;
+}
+
+/* Tiny-cog side strips sit flush against the main board. */
+.board-with-sides > table.cogboard:first-child,
+.board-with-sides > table.cogboard:last-child {
+    flex: 0 0 auto;
+}
+
+/* Tiny cogs are smaller than regular cogs in-game; shrink both the box and
+   the icon to ~80% of a regular cog slot. */
+.board-with-sides > table.cogboard:first-child tr > td,
+.board-with-sides > table.cogboard:last-child tr > td {
+    height: 27px;
+    width: 27px;
+    max-width: 27px;
+}
+.board-with-sides > table.cogboard:first-child tr > td > div,
+.board-with-sides > table.cogboard:last-child tr > td > div {
+    background-size: contain;
 }
 
 .border {

@@ -133,6 +133,7 @@ class CogInventory {
   constructor(cogs={}, slots={}) {
     this.cogs = cogs;
     this.slots = slots;
+    this.smallCogs = {};
     this.flagPose = [];
     this.flaggyShopUpgrades = 0;
     this.availableSlotKeys = [];
@@ -326,6 +327,18 @@ class CogInventory {
     this.cogs = {};
     for (const cog of cogArray) {
       this.cogs[cog.key] = cog;
+    }
+
+    // W7 tiny cogs (CogSm) live in the 24 dedicated side slots (228-239 left,
+    // 240-251 right) and can also sit unplaced in the spare inventory. They have
+    // no CogM stats and are not optimized, so keep them apart from cogs/slots and
+    // expose only their icons for display, keyed by CogO index.
+    this.smallCogs = {};
+    for (let i = 0; i < cogIcons.length; i++) {
+      const icon = cogIcons[i];
+      if (icon && icon.path && icon.path.indexOf("CogSm") !== -1) {
+        this.smallCogs[i] = { key: i, icon, blocked: false, fixed: true, isPlayer: false };
+      }
     }
 
     document.getElementById("notify").style.display = "none";
