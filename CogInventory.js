@@ -165,6 +165,18 @@ class CogInventory {
     this._score = null;
     console.log("Loading");
 
+    if (!save || typeof save !== "object") {
+      throw new Error("No save data found. Paste the \"Raw Data\" from idleonefficiency.com, or enter your username.");
+    }
+    // These keys hold the cog board. If any is absent the input is not a full
+    // save (e.g. wrong/partial data), so fail clearly instead of half-loading.
+    const required = ["CogM", "CogO", "FlagU", "FlagP", "GemItemsPurchased"];
+    const missing = required.filter(k => save[k] === undefined);
+    if (missing.length) {
+      throw new Error("This doesn't look like a full save - missing cog data (" +
+        missing.join(", ") + "). Copy the complete \"Raw Data\" from idleonefficiency.com.");
+    }
+
     // Class id -> name, from the game's CustomLists.h.ClassNames. Only used for
     // debug logging; head tinting below keys off the numeric id ranges directly.
     // Ranges: 1-6 Beginner family, 7-18 Warrior, 19-30 Archer, 31+ Mage.

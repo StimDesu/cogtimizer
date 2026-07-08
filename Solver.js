@@ -43,6 +43,13 @@ class Solver {
     const solutions = [state];
     const startTime = Date.now();
     const allSlots = inventory.availableSlotKeys;
+    // Nothing to rearrange (no unlocked/empty slots or no movable cogs): return
+    // the board unchanged instead of indexing empty arrays and crashing.
+    if (allSlots.length === 0 || state.cogKeys.length === 0) {
+      console.log("Nothing to optimize (no available slots or cogs)");
+      g.best = state;
+      return state;
+    }
     let counter = 0;
     let currentScore = this.getScoreSum(state.score);
 
@@ -67,7 +74,7 @@ class Solver {
       const slot = state.get(slotKey);
       const cog = state.get(cogKey);
 
-      if (slot.fixed || cog.fixed || cog.position().location === "build") continue;
+      if (!slot || !cog || slot.fixed || cog.fixed || cog.position().location === "build") continue;
       state.move(slotKey, cogKey);
       const scoreSumUpdate = this.getScoreSum(state.score);
       if (scoreSumUpdate > currentScore) {
@@ -101,7 +108,7 @@ class Solver {
       const slot = inventory.get(slotKey);
       const cog = inventory.get(cogKey);
 
-      if (slot.fixed || cog.fixed || cog.position().location === "build") continue;
+      if (!slot || !cog || slot.fixed || cog.fixed || cog.position().location === "build") continue;
       inventory.move(slotKey, cogKey);
     }
   }

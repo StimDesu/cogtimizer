@@ -406,9 +406,35 @@
         return str.toString();
       }
 
+      function showLoadError(msg) {
+        let el = document.getElementById("loadError");
+        if (!el) {
+          el = createElem("p");
+          el.id = "loadError";
+          el.style.color = "#ff8a8a";
+          el.style.maxWidth = "90ch";
+          document.querySelector(".inputarea").appendChild(el);
+        }
+        el.textContent = msg || "";
+        el.style.display = msg ? "" : "none";
+      }
+
       function load(save) {
-        cogInvetory.load(save);
+        try {
+          cogInvetory.load(save);
+        } catch (e) {
+          console.error("Failed to load save:", e);
+          showLoadError((e && e.message) || "Could not read the save data.");
+          openLoaderTab();
+          return;
+        }
         console.log("Loading");
+        // A valid save that has no cogs / no unlocked slots can't be optimized.
+        if (cogInvetory.cogKeys.length === 0 || cogInvetory.availableSlotKeys.length === 0) {
+          showLoadError("Loaded, but the cog board looks empty (no cogs or no unlocked slots). Have you used the Construction cog board in-game and refreshed your profile on idleonefficiency.com?");
+        } else {
+          showLoadError("");
+        }
         // Fetch Gem-Shop flaggy upgrades
         document.getElementById("flaggyShop").value = cogInvetory.flaggyShopUpgrades;
         sparePage.goto(0);
@@ -444,20 +470,26 @@
       
       function fetchAndLoadConfig(username) {
         console.log("Trying to fetch", username);
-        if (username.length > 0) {
-          const headers = {
-            "Content-Type": "text/json",
-            method: "GET"
-          };
-          fetch(`https://cdn.idleonefficiency.com/profiles/${username.toLowerCase()}.json`, headers)
-          .then((response) => {
-            return response.json();
-          }).then((json) => {
-            load(json);
-          }).catch((reason) => {
-            console.log(reason);
-          });
+        if (username.trim().length === 0) {
+          showLoadError("Enter your username, or paste the \"Raw Data\" from idleonefficiency.com.");
+          return;
         }
+        const headers = {
+          "Content-Type": "text/json",
+          method: "GET"
+        };
+        fetch(`https://cdn.idleonefficiency.com/profiles/${username.toLowerCase()}.json`, headers)
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error(`No profile found for "${username}" (${response.status}). Check the username or paste the Raw Data instead.`);
+          }
+          return response.json();
+        }).then((json) => {
+          load(json);
+        }).catch((reason) => {
+          console.error(reason);
+          showLoadError((reason && reason.message) || `Couldn't load "${username}".`);
+        });
       }
 
       document.getElementById("load").addEventListener("click", () => {
