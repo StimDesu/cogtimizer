@@ -285,10 +285,14 @@
       }
 
       f.printSmallCogs = (inventory) => {
-        // Left strip = slots 228-239, right strip = 240-251 (one per row).
+        // Left strip = slots 228-239 (t=0-11), right strip = 240-251 (t=12-23).
+        // Locked slots (FlagUnlock[96+t] !== -11) render like blocked board cells.
+        const locked = { blocked: true, fixed: true };
         for (let row = 0; row < 12; row++) {
-          window.smallLeftRenderer.set(row, 0, inventory.smallCogs[228 + row]);
-          window.smallRightRenderer.set(row, 0, inventory.smallCogs[240 + row]);
+          window.smallLeftRenderer.set(row, 0,
+            inventory.smallSlotUnlocked[row] ? inventory.smallCogs[228 + row] : locked);
+          window.smallRightRenderer.set(row, 0,
+            inventory.smallSlotUnlocked[12 + row] ? inventory.smallCogs[240 + row] : locked);
         }
       }
 

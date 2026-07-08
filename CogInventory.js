@@ -134,6 +134,7 @@ class CogInventory {
     this.cogs = cogs;
     this.slots = slots;
     this.smallCogs = {};
+    this.smallSlotUnlocked = [];
     this.playerCount = 10;
     this.flagPose = [];
     this.flaggyShopUpgrades = 0;
@@ -318,7 +319,14 @@ class CogInventory {
     });
     // Get the available board
     this.flagPose = JSON.parse(save["FlagP"]).filter(v=>v>=0); // Only first 4 are used
-    const slots = JSON.parse(save["FlagU"]).map((n, i) => {
+    const flagU = JSON.parse(save["FlagU"]);
+    // Tiny-cog side slots unlock separately: slot t (0-23, board keys 228+t) is
+    // unlocked iff FlagUnlock[96 + t] === -11 (same sentinel the board uses).
+    this.smallSlotUnlocked = [];
+    for (let t = 0; t < 24; t++) {
+      this.smallSlotUnlocked[t] = flagU[96 + t] === -11;
+    }
+    const slots = flagU.map((n, i) => {
       if (n > 0 && this.flagPose.includes(i)) return new Cog({ key: i, fixed: true, blocked: true, isFlag: true, icon: "Blank" });
       if (n !== -11) return new Cog({ key: i, fixed: true, blocked: true });
       return new Cog({ key: i, icon: "Blank" });
