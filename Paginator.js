@@ -54,18 +54,14 @@ class Paginator extends EventTarget {
         this._nextElem.className = (this.pageIndex < this.pageCount - 1) ? "hasMore" : "";
     }
 
-    reset(pageCount, startPage = undefined) {
+    reset(pageCount, startPage = 0) {
         this.pageCount = pageCount;
-        if (!startPage) {
-            startPage = Math.max(0, startPage - 1);
-        }
-
         this.startPage = startPage;
         this.goto(startPage);
     }
 
     goto(page) {
-        page = Math.max(0, Math.min(page, this.pageCount));
+        page = Math.max(0, Math.min(page, this.pageCount - 1));
         const event = new PageEvent("change", page, "goto");
         if (this.dispatchEvent(event)) {
             this.pageIndex = page;

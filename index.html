@@ -293,7 +293,7 @@
       }
 
       f.printSpare = (inventory) => {
-        for (let i = 108; i < 200; i++) {
+        for (let i = 108; i < 228; i++) {
           const cog = inventory.cogs[i] || inventory.smallCogs[i];
           const index = (i - 108);
           const row = Math.floor(index / 3);
@@ -408,7 +408,7 @@
         // Fetch Gem-Shop flaggy upgrades
         document.getElementById("flaggyShop").value = cogInvetory.flaggyShopUpgrades;
         sparePage.goto(0);
-        for (let i = 108; i < 200; i++) {
+        for (let i = 108; i < 228; i++) {
           const cog = cogInvetory.cogs[i] || cogInvetory.smallCogs[i];
           if (!cog) continue;
           const index = (i - 108);

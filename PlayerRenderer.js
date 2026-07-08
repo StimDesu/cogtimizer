@@ -37,7 +37,7 @@ class PlayerRenderer {
         headCanvas.style.visibility = "hidden";
         document.body.appendChild(headCanvas);
         this._head.canvas = headCanvas;
-        let ctx = headCanvas.getContext("2d");
+        let ctx = headCanvas.getContext("2d", { willReadFrequently: true });
         this._head.context = ctx;
 
         const playerCanvas = document.createElement("canvas");
@@ -53,9 +53,9 @@ class PlayerRenderer {
     _colorHead(pr, pg, pb) {
         console.log("color head");
         const ctx = this._head.context;
-        ctx.clearRect(0, 0, this._head.width, this._head.height);
         let headW = parseInt(this._headImg.width);
         let headH = parseInt(this._headImg.height);
+        ctx.clearRect(0, 0, headW, headH);
         ctx.drawImage(
             this._headImg,
             0,

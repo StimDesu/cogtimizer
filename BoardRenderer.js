@@ -74,10 +74,10 @@ class BoardRenderer {
   }
 
   _getIndex(row, column) {
-    if (row > this._rows) {
+    if (row >= this._rows) {
       throw new Error("Tried to access row outside the board");
     }
-    if (column > this._columns) {
+    if (column >= this._columns) {
       throw new Error("Tried to access column outside the board");
     }
 
