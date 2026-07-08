@@ -134,6 +134,7 @@ class CogInventory {
     this.cogs = cogs;
     this.slots = slots;
     this.smallCogs = {};
+    this.playerCount = 10;
     this.flagPose = [];
     this.flaggyShopUpgrades = 0;
     this.availableSlotKeys = [];
@@ -192,6 +193,9 @@ class CogInventory {
 
     const hatIcons = {};
     const playerNames = save["playerNames"];
+    // Character count drives the EXP-boost weighting in the solver. The cap was
+    // raised to 11 in a recent patch, so read it from the save instead of assuming.
+    this.playerCount = (playerNames && playerNames.length) || 10;
     if (playerNames) {
       playerNames.forEach((v, i) => {
         const classNameSlot = `CharacterClass_${i}`;
@@ -357,6 +361,7 @@ class CogInventory {
     res.flagPose = [...this.flagPose];
     res.flaggyShopUpgrades = this.flaggyShopUpgrades;
     res.availableSlotKeys = [...this.availableSlotKeys];
+    res.playerCount = this.playerCount;
     return res;
   }
   

@@ -14,11 +14,12 @@ class Solver {
       flaggy: flaggy
     }
   }
-  
+
   getScoreSum(score) {
+    const players = this.playerCount || 10;
     let res = 0;
     res += score.buildRate * this.weights.buildRate;
-    res += score.expBonus * this.weights.expBonus * (score.expBoost + 10) / 10; // For now we just assume 10 players...
+    res += score.expBonus * this.weights.expBonus * (score.expBoost + players) / players;
     res += score.flaggy * this.weights.flaggy * (score.flagBoost + 4) / 4;
     return res;
   }
@@ -31,6 +32,7 @@ class Solver {
    * solveTime: Number - Time in ms how long the solver should run
    */
   async solve(inventory, solveTime=1000) {
+    this.playerCount = inventory.playerCount || 10;
     if (inventory.flagPose.length === 0) {
       // No flaggs placed means no use for flaggy rate
       this.weights.flaggy = 0;
