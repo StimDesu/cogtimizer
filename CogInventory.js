@@ -164,31 +164,38 @@ class CogInventory {
     this._score = null;
     console.log("Loading");
 
-    let foo = [];
-    //Fix from https://github.com/Monoblos/cogtimizer/pull/8/files, thanks https://github.com/Xythium
-    foo[1] = "Beginner"; // White
+    // Class id -> name, from the game's CustomLists.h.ClassNames. Only used for
+    // debug logging; head tinting below keys off the numeric id ranges directly.
+    // Ranges: 1-6 Beginner family, 7-18 Warrior, 19-30 Archer, 31+ Mage.
+    const foo = [];
+    // Beginner family
+    foo[1] = "Beginner";
     foo[2] = "Journeyman";
     foo[3] = "Maestro";
-    foo[7] = "Warrior"; // 
     foo[4] = "Voidwalker";
-    foo[7] = "Warrior"; //
+    foo[5] = "Infinilyte";
+    // Warrior family
+    foo[7] = "Warrior";
     foo[8] = "Barbarian";
     foo[9] = "Squire";
     foo[10] = "Blood Berserker";
     foo[12] = "Divine Knight";
-    foo[19] = "Archer"; // 
     foo[14] = "Death Bringer";
-    foo[19] = "Archer"; //
+    foo[16] = "Royal Guardian";
+    // Archer family
+    foo[19] = "Archer";
     foo[20] = "Bowman";
     foo[21] = "Hunter";
     foo[22] = "Siege Breaker";
     foo[25] = "Beast Master";
-    foo[31] = "Mage"; // 
     foo[29] = "Wind Walker";
-    foo[31] = "Mage"; //
+    // Mage family
+    foo[31] = "Mage";
     foo[32] = "Wizard";
     foo[33] = "Shaman";
     foo[34] = "Elemental Sorcerer";
+    foo[35] = "Spiritual Monk";
+    foo[36] = "Bubonic Conjuror";
     foo[40] = "Arcane Cultist";
 
     const hatIcons = {};
@@ -207,17 +214,13 @@ class CogInventory {
           // Mage
           window.player._colorHead(.9, .77, 1);
         } else if (classNameIndex >= 19) {
-          // Archer
+          // Archer family (19-30)
           window.player._colorHead(.58, 1, .6);
         } else if (classNameIndex >= 7) {
-          // Warrior
+          // Warrior family (7-18), incl. Squire, Royal Guardian, etc.
           window.player._colorHead(1, .77, .75);
-        } else if (classNameIndex === 9) {
-          // Squire
-          window.player._colorHead(1, 1, 0);
         } else {
-          // Beginner
-          // Journeyman
+          // Beginner family (1-6): Beginner, Journeyman, Maestro, Voidwalker, Infinilyte
           window.player._colorHead(.5, .91, .92);
         }
 
