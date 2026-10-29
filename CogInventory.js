@@ -200,16 +200,17 @@ class CogInventory {
     this._score = null;
     console.log("Loading");
 
+    const tr = typeof t === "function" ? t : (text, vars) => text.replace(/\{(\w+)\}/g, (m, k) => vars[k]);
     if (!save || typeof save !== "object") {
-      throw new Error("No save data found. Paste the \"Raw Data\" from idleonefficiency.com, or enter your username.");
+      throw new Error(tr("No save data found. Paste the \"Raw Data\" from idleonefficiency.com, or enter your username."));
     }
     // These keys hold the cog board. If any is absent the input is not a full
     // save (e.g. wrong/partial data), so fail clearly instead of half-loading.
     const required = ["CogM", "CogO", "FlagU", "FlagP", "GemItemsPurchased"];
     const missing = required.filter(k => save[k] === undefined);
     if (missing.length) {
-      throw new Error("This doesn't look like a full save - missing cog data (" +
-        missing.join(", ") + "). Copy the complete \"Raw Data\" from idleonefficiency.com.");
+      throw new Error(tr("This doesn't look like a full save - missing cog data ({keys}). Copy the complete \"Raw Data\" from idleonefficiency.com.",
+        { keys: missing.join(", ") }));
     }
 
     // Class id -> name, from the game's CustomLists.h.ClassNames. Only used for

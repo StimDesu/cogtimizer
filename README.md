@@ -19,6 +19,7 @@ Changes in this fork:
   characters off the board or in cog makers, construction levels, Carpenter / Call Me Bob bubbles,
   construction vials, Seesaw statue, Sawsaw Salala star sign, post office box, gem shop and achievement bonuses.
 - Layout fixes: the board no longer breaks apart and the settings panel no longer covers it.
+- English and Russian interface (language switch in the top menu).
 
 Questions and bug reports: [GitHub issues](https://github.com/StimDesu/cogtimizer/issues).
 
