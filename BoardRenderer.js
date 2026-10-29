@@ -153,7 +153,10 @@ class BoardRenderer {
       col.title = BoardRenderer.tooltip(cog);
     } else {
       if (cog.isFlag) {
-        col.style.backgroundImage = `url("icons/cogs/flag.png")`;
+        col.style.backgroundImage = `url("${cog.flagIcon || "icons/cogs/flag.png"}")`;
+        col.style.backgroundSize = "100% 100%";
+        col.style.imageRendering = "pixelated";
+        col.innerHTML = BoardRenderer.flagLabelHtml(cog);
       }
     }
   }
@@ -237,6 +240,20 @@ class BoardRenderer {
   static gameNumberHtml(cog, mode) {
     const text = BoardRenderer.notateBig(BoardRenderer.gameValue(cog, mode)) + (mode === "exp" ? "%" : "");
     return `<div class="gamenumber">${text}</div>`;
+  }
+
+  // Banner above a placed flag, as in the game: "collected/needed", shown
+  // once at least 0.01 flaggy is in (collected uses "Small" below 10).
+  static flagLabelHtml(cog) {
+    if (!(cog.flagProgress >= .01) || !cog.flagReq) return "";
+    const have = cog.flagProgress < 10 ? BoardRenderer.notateSmall(cog.flagProgress) : BoardRenderer.notateBig(cog.flagProgress);
+    return `<div class="flaglabel">${have}/${BoardRenderer.notateBig(cog.flagReq)}</div>`;
+  }
+
+  // Port of the game's _customBlock_NotateNumber(value, "Small") for values below 100.
+  static notateSmall(e) {
+    if (e >= 100) return BoardRenderer.notateBig(e);
+    return "" + (e < 1 ? Math.round(100 * e) / 100 : Math.round(10 * e) / 10);
   }
 
   // Port of the game's _customBlock_NotateNumber(value, "Big").

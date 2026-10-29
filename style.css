@@ -801,3 +801,21 @@ table.cogboard tr > td > div.player-icon {
     right: 12px;
     bottom: 11px;
 }
+
+/* Banner above a placed flag ("collected/needed"), like the game's red label. */
+.flaglabel {
+    position: absolute;
+    left: 50%;
+    top: -11px;
+    transform: translateX(-50%);
+    white-space: nowrap;
+    pointer-events: none;
+    padding: 3px 6px 2px;
+    color: white;
+    background: #b8282f;
+    border: 2px solid #5a1015;
+    border-radius: 6px;
+    font: 8px/8px 'PressStart', 'Press Start 2P', monospace;
+    text-shadow: 1px 1px 0 #000;
+    z-index: 3;
+}

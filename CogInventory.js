@@ -100,6 +100,10 @@ class Cog {
     this.nothing = initialValues.nothing; // Description: +% Nothing! LOL
     this.fixed = initialValues.fixed;
     this.blocked = initialValues.blocked;
+    // Placed flags: flaggy collected so far, flaggy needed and the flag image.
+    this.flagProgress = initialValues.flagProgress;
+    this.flagReq = initialValues.flagReq;
+    this.flagIcon = initialValues.flagIcon;
     this._position = null;
   }
   get key() {
@@ -356,7 +360,15 @@ class CogInventory {
       this.smallSlotUnlocked[t] = flagU[96 + t] === -11;
     }
     const slots = flagU.map((n, i) => {
-      if (n > 0 && this.flagPose.includes(i)) return new Cog({ key: i, fixed: true, blocked: true, isFlag: true, icon: "Blank" });
+      if (n > 0 && this.flagPose.includes(i)) {
+        // Same as the game's board: pink flag once a gem shop flaggy upgrade is bought.
+        return new Cog({
+          key: i, fixed: true, blocked: true, isFlag: true, icon: "Blank",
+          flagProgress: n,
+          flagReq: typeof FLAG_REQS !== "undefined" && i < BOARD_SIZE ? 25 * FLAG_REQS[i] : undefined,
+          flagIcon: this.flaggyShopUpgrades > 0 ? "icons/cogs/CogFLflag2.png" : "icons/cogs/CogFLflag.png",
+        });
+      }
       if (n !== -11) return new Cog({ key: i, fixed: true, blocked: true });
       return new Cog({ key: i, icon: "Blank" });
     });
