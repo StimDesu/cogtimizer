@@ -19,7 +19,7 @@ Changes in this fork:
   characters off the board or in cog makers, construction levels, Carpenter / Call Me Bob bubbles,
   construction vials, Seesaw statue, Sawsaw Salala star sign, post office box, gem shop and achievement bonuses.
 - Star signs: where the Telescope is, its quest, and the path to Chronus Cosmos / Hydron Cosmos / Sawsaw Salala.
-- Placed flags look like in the game (red flag, pink with the gem shop flaggy upgrade) with the "collected/needed" banner.
+- Placed flags look like in the game (red flag, pink with the gem shop flaggy upgrade) with the "collected/needed" banner (can be turned off in the settings).
 - Character heads on the board wear the same hat as in the game (premium hat first, sprite frame from the game data).
 - "Numbers on cogs" setting: the same number the game shows on each cog (Build / Flaggy / EXP view, with boosts from the cogs around it and the game's own rounding), or every stat in color.
 - "Step by step" button: shows one swap at a time with both slots highlighted and numbered, so the in-game drags are easy to follow.

@@ -87,6 +87,8 @@ const I18N = {
     "Step by step ({n} swaps)": "Пошагово (перестановок: {n})",
     "Max swaps (0 = no limit)": "Макс. перестановок (0 = без лимита)",
     "Numbers on cogs": "Числа на шестерёнках",
+    "Show flag progress": "Показывать прогресс флажков",
+    "The red collected/needed banner above each placed flag, as in the game.": "Красная плашка «накоплено/нужно» над каждым установленным флажком, как в игре.",
     "None": "Нет",
     "Build (as in game)": "Стройка (как в игре)",
     "Flaggy (as in game)": "Флагги (как в игре)",

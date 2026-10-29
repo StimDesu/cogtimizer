@@ -819,3 +819,7 @@ table.cogboard tr > td > div.player-icon {
     text-shadow: 1px 1px 0 #000;
     z-index: 3;
 }
+
+body.hide-flag-labels .flaglabel {
+    display: none;
+}
