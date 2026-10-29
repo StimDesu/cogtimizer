@@ -259,19 +259,7 @@ class CogInventory {
         const className = foo[classNameIndex];
         console.log(v, classNameIndex, className);
 
-        if (classNameIndex >= 31) {
-          // Mage
-          window.player._colorHead(.9, .77, 1);
-        } else if (classNameIndex >= 19) {
-          // Archer family (19-30)
-          window.player._colorHead(.58, 1, .6);
-        } else if (classNameIndex >= 7) {
-          // Warrior family (7-18), incl. Squire, Royal Guardian, etc.
-          window.player._colorHead(1, .77, .75);
-        } else {
-          // Beginner family (1-6): Beginner, Journeyman, Maestro, Voidwalker, Infinilyte
-          window.player._colorHead(.5, .91, .92);
-        }
+        window.player.colorHeadForClass(classNameIndex);
 
         // Same choice as the game's cog board: the premium helmet (equipment
         // slot 8) unless it is empty or EquipmentHats38, else the normal helmet
