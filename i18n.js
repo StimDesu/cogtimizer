@@ -128,7 +128,11 @@ const I18N = {
     "Visible Ink vial not unlocked": "Флакон Visible Ink не открыт",
     "+1% Construction EXP per level.": "+1% опыта стройки за уровень.",
     "No cogs give '% Player Construct XP'": "Нет шестерёнок с «% Player Construct XP»",
-    "Player EXP can't be improved by moving cogs; only the '% Bonus Construct EXP' total and the sources above help.": "Опыт персонажей перестановкой шестерёнок не поднять; помогают только общий «% Bonus Construct EXP» и источники выше.",
+    "Such cogs boost the EXP of characters next to them. Until you have them, player EXP grows only from '% Bonus Construct EXP' cogs on the board and the sources above.": "Такие шестерёнки усиливают опыт соседних персонажей. Пока их нет, опыт персонажей растёт только от шестерёнок с «% Bonus Construct EXP» на доске и от источников выше.",
+    "Spare cogs with '% Bonus Construct EXP' are not on the board: +{spare}% unused (board total now {board}%)": "Шестерёнки с «% Bonus Construct EXP» лежат в запасе, а не на доске: +{spare}% пропадает (сейчас на доске {board}%)",
+    "{n} cogs in the spare inventory. This bonus multiplies every character's Construction EXP, but only for cogs placed on the board. Put them in empty slots or instead of weak cogs; the solver with the 'Player EXP' goal does this.": "В запасе таких шестерёнок: {n}. Этот бонус умножает опыт стройки всех персонажей, но считается только для шестерёнок на доске. Поставь их в пустые слоты или вместо слабых шестерёнок; оптимизатор с целью «Опыт игроков» сделает это сам.",
+    "All cogs with '% Bonus Construct EXP' are on the board: {board}%": "Все шестерёнки с «% Bonus Construct EXP» стоят на доске: {board}%",
+    "This bonus multiplies every character's Construction EXP.": "Этот бонус умножает опыт стройки всех персонажей.",
 
     // Checklist: build rate
     "Carpenter bubble level {lvl}: +{pct}% build per Construction level": "Пузырь Carpenter, уровень {lvl}: +{pct}% стройки за каждый уровень стройки",

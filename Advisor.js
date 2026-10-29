@@ -183,9 +183,22 @@ class Advisor {
     add(E, statueLv > 0 ? "ok" : "tip", tr("Seesaw statue level {lvl}: +{pct}% Construction EXP", { lvl: statueLv, pct: num(statueLv * .5, 1) }), tr("+0.5% per level."));
     const inkLv = Number(vials[32]) || 0;
     add(E, inkLv > 0 ? "ok" : "tip", inkLv > 0 ? tr("Visible Ink vial level {lvl}", { lvl: inkLv }) : tr("Visible Ink vial not unlocked"), tr("+1% Construction EXP per level."));
+    // '% Bonus Construct EXP' (d) only counts for cogs placed on the board.
+    if (this.inventory) {
+      const boardBonus = this.inventory.score.expBonus;
+      const spareExp = Object.values(this.inventory.cogs).filter(c => c.key >= 108 && c.expBonus > 0);
+      const spareBonus = spareExp.reduce((sum, c) => sum + c.expBonus, 0);
+      if (spareBonus > 0) {
+        add(E, "warn", tr("Spare cogs with '% Bonus Construct EXP' are not on the board: +{spare}% unused (board total now {board}%)", { spare: num(spareBonus), board: num(boardBonus) }),
+          tr("{n} cogs in the spare inventory. This bonus multiplies every character's Construction EXP, but only for cogs placed on the board. Put them in empty slots or instead of weak cogs; the solver with the 'Player EXP' goal does this.", { n: spareExp.length }));
+      } else {
+        add(E, "ok", tr("All cogs with '% Bonus Construct EXP' are on the board: {board}%", { board: num(boardBonus) }),
+          tr("This bonus multiplies every character's Construction EXP."));
+      }
+    }
     const expCogs = Object.values(this._json("CogM", {})).filter(c => c.f).length;
     if (expCogs === 0) {
-      add(E, "tip", tr("No cogs give '% Player Construct XP'"), tr("Player EXP can't be improved by moving cogs; only the '% Bonus Construct EXP' total and the sources above help."));
+      add(E, "tip", tr("No cogs give '% Player Construct XP'"), tr("Such cogs boost the EXP of characters next to them. Until you have them, player EXP grows only from '% Bonus Construct EXP' cogs on the board and the sources above."));
     }
 
     // ---- Build rate
