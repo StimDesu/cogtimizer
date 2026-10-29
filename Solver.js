@@ -208,6 +208,70 @@ class Solver {
     return Solver.swapCount(res) < Solver.swapCount(best) ? res : best;
   }
 
+  // Swaps [fromKey, toKey] that turn the start board into `inventory`, the same
+  // order the step list on the page uses.
+  static swapSteps(inventory) {
+    const steps = [], carried = {};
+    for (const cog of Object.values(inventory.cogs)) {
+      if (cog.key !== cog.initialKey) carried[cog.initialKey] = cog;
+    }
+    let entry;
+    while (entry = Object.entries(carried)[0]) {
+      const [key, cog] = entry;
+      const other = carried[cog.key];
+      if (other === cog) { delete carried[key]; continue; }
+      if (other) carried[key] = other; else delete carried[key];
+      steps.push([Number(key), cog.key]);
+      delete carried[cog.key];
+    }
+    return steps;
+  }
+
+  // Best board reachable with at most `maxSwaps` drags. Two greedy tries, the
+  // better one wins: drop the least useful swaps from the full solution (good
+  // for generous limits), or build up from the start board one best swap at a
+  // time (good for small limits).
+  limitSwaps(start, best, maxSwaps) {
+    const apply = (steps) => {
+      const board = start.clone();
+      for (const [from, to] of steps) board.move(from, to);
+      return board;
+    };
+    let trimmed = best;
+    let steps = Solver.swapSteps(trimmed);
+    while (steps.length > maxSwaps) {
+      let dropAt = 0, dropScore = -Infinity;
+      for (let i = 0; i < steps.length; i++) {
+        const score = this.getScoreSum(apply(steps.filter((_, j) => j !== i)).score);
+        if (score > dropScore) { dropScore = score; dropAt = i; }
+      }
+      trimmed = apply(steps.filter((_, j) => j !== dropAt));
+      steps = Solver.swapSteps(trimmed);
+    }
+
+    const built = start.clone();
+    for (let n = 0; n < maxSwaps; n++) {
+      let swap = null, swapScore = this.getScoreSum(built.score) + 1e-12;
+      for (const slot of built.availableSlotKeys) {
+        const slotCog = built.get(slot);
+        if (slotCog && slotCog.fixed) continue;
+        for (const key of built.cogKeys) {
+          const cog = built.get(key);
+          if (key === slot || !cog || cog.fixed || cog.position().location === "build") continue;
+          built.move(slot, key);
+          const score = this.getScoreSum(built.score);
+          if (score > swapScore) { swapScore = score; swap = [slot, key]; }
+          built.move(slot, key);
+        }
+      }
+      if (!swap) break;
+      built.move(swap[0], swap[1]);
+    }
+
+    const layout = this.getScoreSum(built.score) > this.getScoreSum(trimmed.score) ? built : trimmed;
+    return this.planMoves(start, layout);
+  }
+
   // In-game drags needed to reach this layout: every moved cog is one drag,
   // except that a closed cycle of k cogs takes k - 1 swaps.
   static swapCount(inventory) {

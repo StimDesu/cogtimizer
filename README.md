@@ -20,6 +20,7 @@ Changes in this fork:
   construction vials, Seesaw statue, Sawsaw Salala star sign, post office box, gem shop and achievement bonuses.
 - Star signs: where the Telescope is, its quest, and the path to Chronus Cosmos / Hydron Cosmos / Sawsaw Salala.
 - "Step by step" button: shows one swap at a time with both slots highlighted and numbered, so the in-game drags are easy to follow.
+- "Max swaps" setting: the best board reachable in at most N drags, with the share of the full gain it keeps. The same board is also reached with as few swaps as possible.
 - Layout fixes: the board no longer breaks apart and the settings panel no longer covers it.
 - English and Russian interface (language switch in the top menu).
 
