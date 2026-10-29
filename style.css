@@ -267,6 +267,61 @@ table.cogboard tr {
     flex-wrap: nowrap;
 }
 
+#advice {
+    padding: 1em;
+    border-top: 4px solid #b47848;
+    background: url("assets/wooden_light.png");
+}
+
+#advice h3 {
+    font-family: 'PressStart';
+    font-size: .8em;
+}
+
+#advice h4 {
+    font-size: .65em;
+    margin: 1.2em 0 .5em 0;
+}
+
+.advice-hint {
+    margin: .4em 0 0 0;
+    font-size: .9em;
+    opacity: .85;
+}
+
+.advice-group {
+    max-width: 60em;
+}
+
+.advice-item {
+    display: flex;
+    gap: .6em;
+    align-items: flex-start;
+    padding: .35em .5em;
+    margin-bottom: .3em;
+    background: rgba(0, 0, 0, 0.25);
+    border-left: 4px solid transparent;
+}
+
+.advice-item.advice-warn { border-left-color: #ff7567; }
+.advice-item.advice-tip  { border-left-color: #f6cfa7; }
+.advice-item.advice-ok   { border-left-color: #86c870; opacity: .8; }
+
+.advice-mark {
+    font-family: 'PressStart';
+    font-size: .7em;
+    width: 1.4em;
+    flex: 0 0 auto;
+    padding-top: .2em;
+}
+
+.advice-detail {
+    white-space: pre-line;
+    font-size: .9em;
+    opacity: .85;
+    margin-top: .15em;
+}
+
 .panel-title {
     font-family: 'PressStart';
     font-size: .55em;

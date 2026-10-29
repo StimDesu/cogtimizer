@@ -7,10 +7,11 @@
 
     <link rel="icon" type="image/x-icon" href="favicon.ico" />
 
-    <link rel="stylesheet" href="style.css?v=3" />
-    <script type="text/javascript" src="Solver.js?v=3"></script>
-    <script type="text/javascript" src="CogInventory.js?v=3"></script>
-    <script type="text/javascript" src="BoardRenderer.js?v=3"></script>
+    <link rel="stylesheet" href="style.css?v=4" />
+    <script type="text/javascript" src="Solver.js?v=4"></script>
+    <script type="text/javascript" src="CogInventory.js?v=4"></script>
+    <script type="text/javascript" src="BoardRenderer.js?v=4"></script>
+    <script type="text/javascript" src="Advisor.js?v=4"></script>
     <script type="text/javascript" src="PlayerRenderer.js"></script>
     <script type="text/javascript" src="Paginator.js"></script>
     
@@ -144,6 +145,7 @@
         </div>
         <div id="steps"></div>
       </div>
+      <div id="advice" style="display: none;"></div>
     </div>
     <p id="start"></p>
     <p id="end"></p>
@@ -509,6 +511,7 @@
         const initScore = cogInvetory.score;
         f.printBoard(cogInvetory.board);
         f.printSmallCogs(cogInvetory);
+        f.printAdvice(save);
 
         document.getElementById("solve").disabled = "";
         document.getElementById("steps").innerHTML = "";
@@ -657,9 +660,61 @@
         openCogTab();
       };
     
+      // Construction checklist under the board, grouped by section; problems first.
+      f.printAdvice = (save) => {
+        const elem = document.getElementById("advice");
+        elem.innerHTML = "";
+        let items;
+        try {
+          items = new Advisor(save, cogInvetory).advise();
+        } catch (e) {
+          console.error("Advisor failed:", e);
+          return;
+        }
+        const order = { warn: 0, tip: 1, ok: 2 };
+        const icon = { warn: "!", tip: "?", ok: "✓" };
+        const title = createElem("h3");
+        title.innerText = "Construction checklist";
+        elem.appendChild(title);
+        const hint = createElem("p");
+        hint.className = "advice-hint";
+        hint.innerText = "Based on your save and the game's own formulas. ! = something to fix, ? = room to grow, ✓ = fine.";
+        elem.appendChild(hint);
+        for (const section of [...new Set(items.map(i => i.section))]) {
+          const group = createElem("div");
+          group.className = "advice-group";
+          const h = createElem("h4");
+          h.innerText = section;
+          group.appendChild(h);
+          const list = items.filter(i => i.section === section).sort((a, b) => order[a.level] - order[b.level]);
+          for (const item of list) {
+            const row = createElem("div");
+            row.className = "advice-item advice-" + item.level;
+            const mark = createElem("span");
+            mark.className = "advice-mark";
+            mark.innerText = icon[item.level];
+            const text = createElem("div");
+            const strong = createElem("b");
+            strong.innerText = item.title;
+            text.appendChild(strong);
+            if (item.detail) {
+              const detail = createElem("div");
+              detail.className = "advice-detail";
+              detail.innerText = item.detail;
+              text.appendChild(detail);
+            }
+            row.appendChild(mark);
+            row.appendChild(text);
+            group.appendChild(row);
+          }
+          elem.appendChild(group);
+        }
+      };
+
       function openCogTab() {
         document.getElementById("loader").style.display = "none";
         document.getElementById("result").style.display = "inherit";
+        document.getElementById("advice").style.display = document.getElementById("advice").childNodes.length ? "block" : "none";
 
         document.getElementById("loaderbtn").className = "";
         document.getElementById("cogbtn").className = "active";
@@ -668,6 +723,7 @@
       function openLoaderTab() {
         document.getElementById("loader").style.display = "inherit";
         document.getElementById("result").style.display = "none";
+        document.getElementById("advice").style.display = "none";
 
         document.getElementById("loaderbtn").className = "active";
         document.getElementById("cogbtn").className = "";
