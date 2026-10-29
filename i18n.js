@@ -52,6 +52,8 @@ const I18N = {
     "Player Construct EXP": "Опыт стройки персонажей",
     "Flaggy Rate": "Флагги",
     "Flag Speed": "Скорость флагов",
+    "Not shown in the game. How much flaggy all placed flags get per hour together: each flag fills at the Flaggy Rate, faster if a cog with a flag speed bonus covers it. Without such cogs it is just Flaggy Rate times the number of flags.": "В игре этого числа нет. Сколько флагги в час получают все установленные флаги вместе: каждый флаг заполняется со скоростью «Флагги», а быстрее — если его накрывает шестерёнка с бонусом к скорости флагов. Без таких шестерёнок это просто «Флагги», умноженное на число флагов.",
+    "The same number as Flaggy Rate in the game.": "То же число, что «Flaggy Rate» в игре.",
     "/HR": "/ч",
     "bonus": "бонус",
     "Page": "Стр.",
