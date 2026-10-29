@@ -10,8 +10,8 @@
     <!-- Same pixel font with Cyrillic glyphs, used where the bundled PressStart has none -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" />
-    <link rel="stylesheet" href="style.css?v=13" />
-    <script type="text/javascript" src="i18n.js?v=17"></script>
+    <link rel="stylesheet" href="style.css?v=14" />
+    <script type="text/javascript" src="i18n.js?v=18"></script>
     <script type="text/javascript" src="Solver.js?v=7"></script>
     <script type="text/javascript" src="CogInventory.js?v=8"></script>
     <script type="text/javascript" src="BoardRenderer.js?v=11"></script>
@@ -820,7 +820,7 @@
         localStorage.setItem("maxSwaps", maxSwaps);
         lastRun.limit = null;
         if (maxSwaps > 0 && Solver.swapCount(full) > maxSwaps) {
-          document.getElementById("solvetext").innerText = t("Fitting the swap limit...");
+          document.getElementById("solvetext").innerText = t("Fitting limit...");
           await yield();
           best = solver.limitSwaps(cogInvetory, full, maxSwaps);
           const startSum = solver.getScoreSum(start.score), fullGain = solver.getScoreSum(full.score) - startSum;
