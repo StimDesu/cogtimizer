@@ -777,3 +777,27 @@ td.toMove[data-mark]::before {
     text-shadow: 1px 1px 0 #000, -1px 1px 0 #000, 1px -1px 0 #000, -1px -1px 0 #000;
     z-index: 2;
 }
+
+/* Player head + hat: 65px canvas drawn 1:1, centered on the 45px tile and
+   allowed to overhang it like in the game. */
+table.cogboard tr > td > div.player-icon {
+    position: absolute;
+    left: -10px;
+    top: -10px;
+    width: 65px !important;
+    height: 65px !important;
+    background-size: 65px 65px;
+    image-rendering: pixelated;
+    z-index: 1;
+    pointer-events: none;
+}
+
+.player-icon .cogstats {
+    left: 11px;
+    bottom: 11px;
+}
+
+.player-icon .gamenumber {
+    right: 12px;
+    bottom: 11px;
+}
