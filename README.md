@@ -15,6 +15,9 @@ Changes in this fork:
   (boost shapes, build rate, flaggy rate, player construct EXP, flag speed).
 - "Optimize for" setting: balanced, build rate, player EXP, flaggy rate, flag speed or custom weights.
 - Improved solver and fewer useless moves.
+- Construction checklist read from the save: Redox Rates / Sharper Saws talent levels,
+  characters off the board or in cog makers, construction levels, Carpenter / Call Me Bob bubbles,
+  construction vials, Seesaw statue, Sawsaw Salala star sign, post office box, gem shop and achievement bonuses.
 - Layout fixes: the board no longer breaks apart and the settings panel no longer covers it.
 
 Questions and bug reports: [GitHub issues](https://github.com/StimDesu/cogtimizer/issues).
