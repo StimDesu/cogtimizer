@@ -7,87 +7,90 @@
 
     <link rel="icon" type="image/x-icon" href="favicon.ico" />
 
-    <link rel="stylesheet" href="style.css?v=4" />
-    <script type="text/javascript" src="Solver.js?v=4"></script>
-    <script type="text/javascript" src="CogInventory.js?v=4"></script>
-    <script type="text/javascript" src="BoardRenderer.js?v=4"></script>
-    <script type="text/javascript" src="Advisor.js?v=4"></script>
+    <!-- Same pixel font with Cyrillic glyphs, used where the bundled PressStart has none -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" />
+    <link rel="stylesheet" href="style.css?v=6" />
+    <script type="text/javascript" src="i18n.js?v=6"></script>
+    <script type="text/javascript" src="Solver.js?v=5"></script>
+    <script type="text/javascript" src="CogInventory.js?v=5"></script>
+    <script type="text/javascript" src="BoardRenderer.js?v=5"></script>
+    <script type="text/javascript" src="Advisor.js?v=5"></script>
     <script type="text/javascript" src="PlayerRenderer.js"></script>
-    <script type="text/javascript" src="Paginator.js"></script>
+    <script type="text/javascript" src="Paginator.js?v=5"></script>
     
     <title>Cogtimizer</title>
   </head>
   <body>
     <div id="notification-banner" class="notification-banner">
-      <span class="notification-text">
-        This is a fork of <a href="https://github.com/tkprocat/cogtimizer">tkprocat's fork</a> of the original
-        <a href="https://github.com/Monoblos/cogtimizer">Cogtimizer</a> by <a href="https://github.com/Monoblos/">Monoblos</a>,
-        with board scoring taken from the game's code and a choice of what to optimize.
-        Thanks to Monoblos, <a href="https://github.com/tkprocat">tkprocat</a>, <a href="https://github.com/Bolero-fk">Bolero-fk</a>
-        and <a href="https://github.com/Xythium">Xythium</a>.
-        Questions and bug reports: <a href="https://github.com/StimDesu/cogtimizer/issues">GitHub issues</a>.
-      </span>
+      <span class="notification-text" data-i18n-html="banner"></span>
       <button class="notification-close" onclick="dismissNotification()">&times;</button>
     </div>
     <div class="menucontainer">
       <ul class="menu">
-        <li id="loaderbtn" class="active"><div><div><div>Loader</div></div></div></li>
-        <li id="cogbtn"><div><div><div>Cogs</div></div></div></li>
+        <li id="loaderbtn" class="active"><div><div><div data-i18n="Loader">Loader</div></div></div></li>
+        <li id="cogbtn"><div><div><div data-i18n="Cogs">Cogs</div></div></div></li>
       </ul>
       <div class="options">
         <button id="settingsbtn">
           <div></div>
           <div>
-            Settings
+            <span data-i18n="Settings">Settings</span>
             <div class="checkbox"></div>
           </div>
           <div></div>
         </button>
         <button id="solve" >
           <div></div>
-          <div id="solvetext">Solve</div>
+          <div id="solvetext" data-i18n="Solve">Solve</div>
           <div></div>
         </button>
       </div>
       <div class="spacer"></div>
+      <label class="lang-select"><span data-i18n="Language">Language</span>
+        <select id="lang">
+          <option value="en">English</option>
+          <option value="ru">Русский</option>
+        </select>
+      </label>
       <div class="crow"></div>
     </div>
     <div class="content">
       <div id="loader">
       <div class="inputarea">
-        <div style="margin-bottom: 8px;">Please enter the "Raw Data" from idleonefficiency.com, or you can enter your username. If using your username, make sure you have recently published your profile on idleonefficiency.com, otherwise Cogtimizer will pull stale data. If you make changes and want to run another round of optimizing, please change zones in-game before refreshing data from idleonefficiency.com.</div>
+        <div style="margin-bottom: 8px;" data-i18n="loaderHelp"></div>
         <textarea type="textarea" id="input" rows="10" cols="100"></textarea>
         <div>
-          <button id="load" style="max-width: 15ch;">Load</button>
+          <button id="load" style="max-width: 15ch;" data-i18n="Load">Load</button>
         </div>
       </div>
     </div>
       <div id="result">
         <div id="notify">
-          <span>Please</span>
-          <span>load</span>
-          <span>a</span>
-          <span>savegame</span>
+          <span data-i18n="Please">Please</span>
+          <span data-i18n="load">load</span>
+          <span data-i18n="a">a</span>
+          <span data-i18n="savegame">savegame</span>
         </div>
         <div class="info">
-          <p class="panel-title" title="Cogs in your spare inventory (not on the board). The solver can move them onto the board.">Spare cogs</p>
+          <p class="panel-title" data-i18n="Spare cogs" data-i18n-title="Cogs in your spare inventory (not on the board). The solver can move them onto the board.">Spare cogs</p>
           <div id="spare">---Placeholder---</div>
           <div id="sparepage"></div>
           <div class="stats">
             <span class="buildrate">
-              <h3>Total Build Rate</h3>
+              <h3 data-i18n="Total Build Rate">Total Build Rate</h3>
               <p id="buildrate">N/A</p>
             </span>
             <span class="xpbonus">
-              <h3>Player Construct EXP</h3>
+              <h3 data-i18n="Player Construct EXP">Player Construct EXP</h3>
               <p id="xpbonus">N/A</p>
             </span>
             <span class="flaggyrate">
-              <h3>Flaggy Rate</h3>
+              <h3 data-i18n="Flaggy Rate">Flaggy Rate</h3>
               <p id="flaggyrate">N/A</p>
             </span>
             <span class="flagspeed">
-              <h3>Flag Speed</h3>
+              <h3 data-i18n="Flag Speed">Flag Speed</h3>
               <p id="flagspeed">N/A</p>
             </span>
           </div>
@@ -95,49 +98,49 @@
         <div class="border" id="border"></div>
         <div id="settings" style="display: none;">
           <p>
-            <label for="flaggyShop">Gem Shop Flaggy upgrades</label><br />
+            <label for="flaggyShop" data-i18n="Gem Shop Flaggy upgrades">Gem Shop Flaggy upgrades</label><br />
             <input type="number" id="flaggyShop" value="0" style="width:6ch" disabled=true></input>
           </p>
           <p>
-            <label for="goal">Optimize for</label><br />
+            <label for="goal" data-i18n="Optimize for">Optimize for</label><br />
             <select id="goal">
-              <option value="balanced">Balanced (build + EXP + flaggy)</option>
-              <option value="buildRate">Build rate only</option>
-              <option value="playerXp">Player construct EXP only</option>
-              <option value="flaggy">Flaggy rate only</option>
-              <option value="flagSpeed">Flag speed only</option>
-              <option value="custom">Custom weights</option>
+              <option value="balanced" data-i18n="Balanced (build + EXP + flaggy)">Balanced (build + EXP + flaggy)</option>
+              <option value="buildRate" data-i18n="Build rate only">Build rate only</option>
+              <option value="playerXp" data-i18n="Player construct EXP only">Player construct EXP only</option>
+              <option value="flaggy" data-i18n="Flaggy rate only">Flaggy rate only</option>
+              <option value="flagSpeed" data-i18n="Flag speed only">Flag speed only</option>
+              <option value="custom" data-i18n="Custom weights">Custom weights</option>
             </select>
           </p>
-          <p class="weights">Weights are relative: 1 for build and 2 for flaggy means +1% flaggy is worth +2% build.</p>
+          <p class="weights" data-i18n="Weights are relative: 1 for build and 2 for flaggy means +1% flaggy is worth +2% build.">Weights are relative: 1 for build and 2 for flaggy means +1% flaggy is worth +2% build.</p>
           <p class="weights">
-            <label for="buildRate">Build rate weight</label><br />
+            <label for="buildRate" data-i18n="Build rate weight">Build rate weight</label><br />
             <input type="number" id="buildRate" value="1" step="0.1" style="width:6ch"></input>
           </p>
           <p class="weights">
-            <label for="playerXp">Player EXP weight</label><br />
+            <label for="playerXp" data-i18n="Player EXP weight">Player EXP weight</label><br />
             <input type="number" id="playerXp" value="1" step="0.1" style="width:6ch"></input>
           </p>
           <p class="weights">
-            <label for="flaggy">Flaggy rate weight</label><br />
+            <label for="flaggy" data-i18n="Flaggy rate weight">Flaggy rate weight</label><br />
             <input type="number" id="flaggy" value="1" step="0.1" style="width:6ch"></input>
           </p>
           <p class="weights">
-            <label for="flagSpeed">Flag speed weight</label><br />
+            <label for="flagSpeed" data-i18n="Flag speed weight">Flag speed weight</label><br />
             <input type="number" id="flagSpeed" value="0" step="0.1" style="width:6ch"></input>
           </p>
           <p>
-            <label for="solveTime">Solve times (ms)</label><br />
+            <label for="solveTime" data-i18n="Solve times (ms)">Solve times (ms)</label><br />
             <input type="number" id="solveTime" value="2500" style="width:10ch"></input>
           </p>
-          <h4>Misc.</h4>
+          <h4 data-i18n="Misc.">Misc.</h4>
           <hr />
           <p>
-            <label for="showStats">Show cog stats?</label>
+            <label for="showStats" data-i18n="Show cog stats?">Show cog stats?</label>
             <input type="checkbox" id="showStats" />
           </p>
           <p>
-            <label for="showSolved">Directly show solved board</label>
+            <label for="showSolved" data-i18n="Directly show solved board">Directly show solved board</label>
             <input type="checkbox" id="showSolved" />
           </p>
         </div>
@@ -150,6 +153,10 @@
     <p id="start"></p>
     <p id="end"></p>
     <script type="text/javascript">
+      applyI18n();
+      document.getElementById("lang").value = LANG;
+      document.getElementById("lang").addEventListener("change", (ev) => setLang(ev.target.value));
+
       function dismissNotification() {
         document.getElementById('notification-banner').classList.add('hidden');
         localStorage.setItem('notificationDismissed', 'true');
@@ -231,14 +238,19 @@
       function showScore(score, start) {
         const diff = (key) => start ? mmoifyNumber(score[key] - start[key]) : mmoifyNumber(score[key], false);
         const pct = (key) => start && start[key] ? ` (${(100 * (score[key] / start[key] - 1)).toFixed(1)}%)` : "";
-        document.getElementById("buildrate").innerText = `${diff("buildRate")}/HR${pct("buildRate")}`;
-        document.getElementById("xpbonus").innerText = `${diff("playerXp")}/HR${pct("playerXp")}, bonus ${mmoifyNumber(score.expBonus, false)}%`;
-        document.getElementById("flaggyrate").innerText = `${diff("flaggy")}/HR${pct("flaggy")}`;
-        document.getElementById("flagspeed").innerText = `${diff("flagSpeed")}/HR${pct("flagSpeed")}`;
+        const hr = t("/HR");
+        document.getElementById("buildrate").innerText = `${diff("buildRate")}${hr}${pct("buildRate")}`;
+        document.getElementById("xpbonus").innerText = `${diff("playerXp")}${hr}${pct("playerXp")}, ${t("bonus")} ${mmoifyNumber(score.expBonus, false)}%`;
+        document.getElementById("flaggyrate").innerText = `${diff("flaggy")}${hr}${pct("flaggy")}`;
+        document.getElementById("flagspeed").innerText = `${diff("flagSpeed")}${hr}${pct("flagSpeed")}`;
+        lastScores = [score, start];
       }
+      let lastScores = null;
 
       function describeScore(score) {
-        return `BuildRate: ${mmoifyNumber(score.buildRate, false)}/HR, Player EXP: ${mmoifyNumber(score.playerXp, false)}/HR (+${score.expBonus}%), Flaggy: ${mmoifyNumber(score.flaggy, false)}/HR, Flag speed: ${mmoifyNumber(score.flagSpeed, false)}/HR`;
+        return t("BuildRate: {build}/HR, Player EXP: {xp}/HR (+{bonus}%), Flaggy: {flaggy}/HR, Flag speed: {flag}/HR", {
+          build: mmoifyNumber(score.buildRate, false), xp: mmoifyNumber(score.playerXp, false), bonus: score.expBonus,
+          flaggy: mmoifyNumber(score.flaggy, false), flag: mmoifyNumber(score.flagSpeed, false) });
       }
       const getFlaggyShop = getInput.bind(null, "flaggyShop");
 
@@ -275,12 +287,14 @@
       // boardElem.appendChild(table);
       const boardRow = createElem("div");
       boardRow.className = "board-with-sides";
-      const tinyTitle = "Tiny cog slot (World 7). Tiny cogs give a global bonus and are not moved by the solver.";
       for (const renderer of [window.smallLeftRenderer, window.boardRenderer, window.smallRightRenderer]) {
         const table = renderer.createHTMLElement();
-        if (renderer !== window.boardRenderer) table.title = tinyTitle;
+        if (renderer !== window.boardRenderer) {
+          table.dataset.i18nTitle = "Tiny cog slot (World 7). Tiny cogs give a global bonus and are not moved by the solver.";
+        }
         boardRow.appendChild(table);
       }
+      applyI18n(boardRow);
       boardElem.appendChild(boardRow);
 
       const stepContainer = createElem("div");
@@ -303,7 +317,7 @@
       spareParent.removeChild(spareElem);
 
       const settingsBtn = document.getElementById("settingsbtn");
-      const slider = settingsBtn.childNodes[3].childNodes[1];
+      const slider = settingsBtn.querySelector(".checkbox");
       const settingsPage = document.getElementById("settings");
       const borderElem = document.getElementById("border");
       settingsBtn.addEventListener("click", () => {
@@ -374,12 +388,11 @@
       f.printMove = (stepNumber, board, cog1, cog2, pos1, pos2, showStats = false) => {
         const toAdd = createElem("p");
 
-        let text = `Switch ${pos1.location} \
-        [${pos1.x + 1}|${pos1.y + 1}]`;
+        let text = t("Switch {from} [{fx}|{fy}]", { from: t(pos1.location), fx: pos1.x + 1, fy: pos1.y + 1 });
         if (showStats) {
           text += ` (${cog1.buildRate || 0}:${cog1.expBonus || 0}:${cog1.flaggy || 0})`;
         }
-        text += ` <span style="background-image: url('${cog1.icon.path}')"></span> with ${pos2.location} [${pos2.x + 1}|${pos2.y + 1}]`;
+        text += ` <span style="background-image: url('${cog1.icon.path}')"></span> ` + t("with {to} [{tx}|{ty}]", { to: t(pos2.location), tx: pos2.x + 1, ty: pos2.y + 1 });
         if (showStats) {
           text += ` (${cog2.buildRate || 0}:${cog2.expBonus || 0}:${cog2.flaggy || 0})`;
         }
@@ -485,14 +498,14 @@
           cogInvetory.load(save);
         } catch (e) {
           console.error("Failed to load save:", e);
-          showLoadError((e && e.message) || "Could not read the save data.");
+          showLoadError((e && e.message) || t("Could not read the save data."));
           openLoaderTab();
           return;
         }
         console.log("Loading");
         // A valid save that has no cogs / no unlocked slots can't be optimized.
         if (cogInvetory.cogKeys.length === 0 || cogInvetory.availableSlotKeys.length === 0) {
-          showLoadError("Loaded, but the cog board looks empty (no cogs or no unlocked slots). Have you used the Construction cog board in-game and refreshed your profile on idleonefficiency.com?");
+          showLoadError(t("Loaded, but the cog board looks empty (no cogs or no unlocked slots). Have you used the Construction cog board in-game and refreshed your profile on idleonefficiency.com?"));
         } else {
           showLoadError("");
         }
@@ -511,6 +524,7 @@
         const initScore = cogInvetory.score;
         f.printBoard(cogInvetory.board);
         f.printSmallCogs(cogInvetory);
+        lastSave = save;
         f.printAdvice(save);
 
         document.getElementById("solve").disabled = "";
@@ -532,7 +546,7 @@
       function fetchAndLoadConfig(username) {
         console.log("Trying to fetch", username);
         if (username.trim().length === 0) {
-          showLoadError("Enter your username, or paste the \"Raw Data\" from idleonefficiency.com.");
+          showLoadError(t("Enter your username, or paste the \"Raw Data\" from idleonefficiency.com."));
           return;
         }
         const headers = {
@@ -542,14 +556,14 @@
         fetch(`https://cdn.idleonefficiency.com/profiles/${username.toLowerCase()}.json`, headers)
         .then((response) => {
           if (!response.ok) {
-            throw new Error(`No profile found for "${username}" (${response.status}). Check the username or paste the Raw Data instead.`);
+            throw new Error(t("No profile found for \"{name}\" ({status}). Check the username or paste the Raw Data instead.", { name: username, status: response.status }));
           }
           return response.json();
         }).then((json) => {
           load(json);
         }).catch((reason) => {
           console.error(reason);
-          showLoadError((reason && reason.message) || `Couldn't load "${username}".`);
+          showLoadError((reason && reason.message) || t("Couldn't load \"{name}\".", { name: username }));
         });
       }
 
@@ -621,7 +635,7 @@
       document.getElementById("solve").onclick = async () => {
         const solveTime = getInput("solveTime") || 2500;
         localStorage.setItem("solveTime", solveTime);
-        document.getElementById("solvetext").innerText = "Optimizing...";
+        document.getElementById("solvetext").innerText = t("Optimizing...");
         document.getElementById("steps").innerHTML = "";
         let lastYield = Date.now();
         await yield(); // Yield for DOM-Refresh
@@ -630,7 +644,8 @@
 
         let start = cogInvetory.clone();
 
-        document.getElementById("start").innerText = "Starting " + describeScore(start.score);
+        lastRun = { start: start.score, end: null };
+        document.getElementById("start").innerText = t("Starting") + " " + describeScore(start.score);
         const weights = {};
         for (const key of OPTIMIZABLE) {
           weights[key] = getInput(key) || 0;
@@ -641,7 +656,8 @@
         if (JSON.stringify(weights) !== JSON.stringify(solver.weights)) g.best = null;
         solver.setWeights(weights);
         const best = await solver.solve(cogInvetory, solveTime);
-        document.getElementById("end").innerText = "Final " + describeScore(best.score);
+        lastRun.end = best.score;
+        document.getElementById("end").innerText = t("Final") + " " + describeScore(best.score);
 
         showScore(best.score, start.score);
         
@@ -656,7 +672,7 @@
           stepsPage.reset(optimalSteps.length, 0);
         }
 
-        document.getElementById("solvetext").innerText = "Solve";
+        document.getElementById("solvetext").innerText = t("Solve");
         openCogTab();
       };
     
@@ -674,17 +690,17 @@
         const order = { warn: 0, tip: 1, ok: 2 };
         const icon = { warn: "!", tip: "?", ok: "✓" };
         const title = createElem("h3");
-        title.innerText = "Construction checklist";
+        title.innerText = t("Construction checklist");
         elem.appendChild(title);
         const hint = createElem("p");
         hint.className = "advice-hint";
-        hint.innerText = "Based on your save and the game's own formulas. ! = something to fix, ? = room to grow, ✓ = fine.";
+        hint.innerText = t("Based on your save and the game's own formulas. ! = something to fix, ? = room to grow, ✓ = fine.");
         elem.appendChild(hint);
         for (const section of [...new Set(items.map(i => i.section))]) {
           const group = createElem("div");
           group.className = "advice-group";
           const h = createElem("h4");
-          h.innerText = section;
+          h.innerText = t(section);
           group.appendChild(h);
           const list = items.filter(i => i.section === section).sort((a, b) => order[a.level] - order[b.level]);
           for (const item of list) {
@@ -710,6 +726,23 @@
           elem.appendChild(group);
         }
       };
+
+      // Redraw everything that was built from text when the language changes.
+      let lastSave = null, lastRun = null;
+      window.addEventListener("langchange", () => {
+        window.sparePage._updatePage();
+        stepsPage._updatePage();
+        if (lastScores) showScore(lastScores[0], lastScores[1]);
+        if (lastRun) {
+          document.getElementById("start").innerText = t("Starting") + " " + describeScore(lastRun.start);
+          if (lastRun.end) document.getElementById("end").innerText = t("Final") + " " + describeScore(lastRun.end);
+        }
+        if (optimalSteps) {
+          document.getElementById("steps").innerHTML = "";
+          f.printOptimalSteps(optimalSteps);
+        }
+        if (lastSave) f.printAdvice(lastSave);
+      });
 
       function openCogTab() {
         document.getElementById("loader").style.display = "none";

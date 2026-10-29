@@ -1,5 +1,5 @@
 @font-face {
-    font-family: 'PressStart';
+    font-family: 'PressStart', 'Press Start 2P', monospace;
     src:
         url('assets/press-start.k.ttf') format('truetype');
 }
@@ -21,7 +21,7 @@ body {
 }
 
 .inputarea button {
-    font-family: 'PressStart';
+    font-family: 'PressStart', 'Press Start 2P', monospace;
     font-size: 10px;
     padding: 10px;
     margin-right: 6px;
@@ -48,7 +48,7 @@ body {
 }
 
 .options > button {
-    font-family: 'PressStart';
+    font-family: 'PressStart', 'Press Start 2P', monospace;
     font-size: 10px;
     border: none;
     background-image: url("assets/btn_bg.png");
@@ -138,7 +138,7 @@ body {
 .paginator > div:nth-child(2) {
     flex-grow: 1;
     text-align: center;
-    font-family: 'PressStart';
+    font-family: 'PressStart', 'Press Start 2P', monospace;
     font-size: .7em;
     vertical-align: middle;
     top: 3px;
@@ -159,7 +159,7 @@ ul.menu {
     display: flex;
     flex-direction: row;
     margin: 0;
-    font-family: 'PressStart';
+    font-family: 'PressStart', 'Press Start 2P', monospace;
     font-size: .6em;
 }
 
@@ -274,7 +274,7 @@ table.cogboard tr {
 }
 
 #advice h3 {
-    font-family: 'PressStart';
+    font-family: 'PressStart', 'Press Start 2P', monospace;
     font-size: .8em;
 }
 
@@ -308,7 +308,7 @@ table.cogboard tr {
 .advice-item.advice-ok   { border-left-color: #86c870; opacity: .8; }
 
 .advice-mark {
-    font-family: 'PressStart';
+    font-family: 'PressStart', 'Press Start 2P', monospace;
     font-size: .7em;
     width: 1.4em;
     flex: 0 0 auto;
@@ -323,7 +323,7 @@ table.cogboard tr {
 }
 
 .panel-title {
-    font-family: 'PressStart';
+    font-family: 'PressStart', 'Press Start 2P', monospace;
     font-size: .55em;
     margin: 0 0 .6em 0;
 }
@@ -437,7 +437,7 @@ table.cogboard tr > td {
 }
 
 .stats {
-    font-family: 'PressStart';
+    font-family: 'PressStart', 'Press Start 2P', monospace;
     font-size: .6em;
     letter-spacing: -1.5px;background: rgba(0, 0, 0, 0.2);
     border: 2px solid rgba(0,0,0,0.25);
@@ -451,7 +451,7 @@ h3, h4 {
 }
 
 h4 {
-    font-family: 'PressStart';
+    font-family: 'PressStart', 'Press Start 2P', monospace;
 }
 
 hr {
@@ -549,7 +549,7 @@ hr {
     left: 0;
     top: 25vh;
     text-align: center;
-    font-family: 'PressStart';
+    font-family: 'PressStart', 'Press Start 2P', monospace;
     font-size: 4em;
     z-index: 1;
     animation: blink 1s ease-in-out alternate infinite;
@@ -589,7 +589,7 @@ hr {
     border-bottom: 3px solid #42260a;
     padding: 10px 40px 10px 20px;
     position: relative;
-    font-family: 'PressStart';
+    font-family: 'PressStart', 'Press Start 2P', monospace;
     font-size: 0.6em;
     color: #f4fcff;
     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
@@ -630,4 +630,20 @@ hr {
 .notification-close:hover {
     opacity: 1;
     color: #ffd700;
+}
+
+/* Language switch in the top menu */
+.lang-select {
+    font-family: 'PressStart', 'Press Start 2P', monospace;
+    font-size: .55em;
+    color: #f4fcff;
+    display: flex;
+    align-items: center;
+    gap: .6em;
+    margin-right: 1em;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.6);
+}
+
+.lang-select select {
+    font-size: 1.6em;
 }

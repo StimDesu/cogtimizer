@@ -48,7 +48,7 @@ class Paginator extends EventTarget {
     }
 
     _updatePage() {
-        this._pageElem.innerText = `${this._name} ${this.pageIndex+1}/${this.pageCount}`;
+        this._pageElem.innerText = `${typeof t === "function" ? t(this._name) : this._name} ${this.pageIndex+1}/${this.pageCount}`;
 
         this._prevElem.className = this.pageIndex > 0 ? "hasMore" : "";
         this._nextElem.className = (this.pageIndex < this.pageCount - 1) ? "hasMore" : "";
