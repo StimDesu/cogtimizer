@@ -10,10 +10,13 @@ class PlayerRenderer {
         context: undefined
     };
 
-    width = 36;
-    height = 36;
+    // Shown 1:1 (45px tile + 10px overhang on each side, so tall hats are not
+    // cut off); whole-number scale with no smoothing keeps the pixel art sharp
+    // (the game draws the hat at x2 too).
+    width = 65;
+    height = 65;
 
-    scale = 1.5;
+    scale = 2;
 
     constructor() {
         const hats = document.createElement("img");
@@ -86,7 +89,7 @@ class PlayerRenderer {
     }
 
     render(index) {
-        const defaultYOffset = 5;
+        const defaultYOffset = 6;
 
         let headW = parseInt(this._headImg.width);
         let headH = parseInt(this._headImg.height);
@@ -96,12 +99,13 @@ class PlayerRenderer {
         const ctx = this._player.context;
 
         ctx.clearRect(0, 0, this.width, this.height);
+        ctx.imageSmoothingEnabled = false;
         
         // this._colorHead(Math.random(), Math.random(), Math.random());
         ctx.drawImage(
             this._head.canvas,
-            hw - headW * this.scale * .5,
-            defaultYOffset + hh - headH * this.scale * .5,
+            Math.round(hw - headW * this.scale * .5),
+            Math.round(defaultYOffset + hh - headH * this.scale * .5),
             headW * this.scale,
             headH * this.scale
         );
@@ -122,8 +126,8 @@ class PlayerRenderer {
             row * sh,
             sw,
             sh,
-            hw - swScaled * .5 - 2 * this.scale,
-            defaultYOffset + hh - shScaled * .5 + 1 * this.scale,
+            Math.round(hw - swScaled * .5 - 2 * this.scale),
+            Math.round(defaultYOffset + hh - shScaled * .5 + 1 * this.scale),
             swScaled,
             shScaled
         );

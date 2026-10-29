@@ -135,12 +135,15 @@ class BoardRenderer {
         col.appendChild(div);
       }
 
+      // Player heads: 65px canvas from PlayerRenderer shown 1:1 and overhanging
+      // the tile like in the game (see .player-icon in style.css).
+      div.classList.toggle("player-icon", !!cog.isPlayer && cog.icon.type !== "blank");
       if (cog.icon.type === "blank") {
         div.style.backgroundImage = "";
         div.innerHTML = "";
       } else if (cog.isPlayer) {
         div.style.backgroundImage = `url("${cog.icon.path}")`;
-        div.style["background-size"] = `contain`;
+        div.style.removeProperty("background-size");
         div.innerHTML = BoardRenderer.numbersHtml(cog);
       }	else {
         div.style.removeProperty("background-size");
