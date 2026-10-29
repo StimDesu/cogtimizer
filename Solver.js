@@ -135,4 +135,97 @@ class Solver {
       }
     }
   }
+
+  // Same final board, fewer in-game drags. Cogs with identical stats are
+  // interchangeable and any spare slot is as good as another, so pick which copy
+  // goes where to keep cogs in place and to turn moves into two-way swaps.
+  // Returns `best` unchanged if the new layout would score differently.
+  planMoves(start, best) {
+    const statKey = (c) => JSON.stringify([c.buildRate, c.isPlayer, c.baseExp, c.expGain, c.flaggy, c.expBonus,
+      c.buildRadiusBoost, c.expRadiusBoost, c.flaggyRadiusBoost, c.boostRadius, c.flagBoost, c.fixed]);
+    const boardKeys = start.availableSlotKeys;
+    const startAt = (k) => start.cogs[k];
+    const want = {}; // board key -> stat key of the cog that must end there (undefined = empty)
+    for (const k of boardKeys) if (best.cogs[k]) want[k] = statKey(best.cogs[k]);
+
+    const target = new Map(); // start key -> final key
+    const free = new Map();   // stat key -> start keys of not yet placed copies
+    for (const [k, cog] of Object.entries(start.cogs)) {
+      const key = Number(k);
+      if (key >= 96 && key < SPARE_START) continue; // cog maker slots never move
+      if (key < BOARD_SIZE && want[key] === statKey(cog)) { target.set(key, key); continue; }
+      const sk = statKey(cog);
+      if (!free.has(sk)) free.set(sk, []);
+      free.get(sk).push(key);
+    }
+
+    // Fill the board. A copy that is on the board already has to move anyway,
+    // so it is preferred over one from the spare inventory; best of all is a copy
+    // sitting where the cog it replaces is wanted (one swap places both).
+    const placed = new Set(target.values());
+    for (const k of boardKeys.filter(k => want[k] !== undefined && !placed.has(k))) {
+      const pool = free.get(want[k]) || [];
+      if (!pool.length) return best;
+      const here = startAt(k);
+      const rank = (q) => {
+        if (q < BOARD_SIZE && here && want[q] === statKey(here) && !placed.has(q)) return 0;
+        return q < BOARD_SIZE ? 1 : 2;
+      };
+      pool.sort((a, b) => rank(a) - rank(b));
+      const q = pool.shift();
+      target.set(q, k);
+      placed.add(k);
+    }
+
+    // Everything else stays in the spare inventory; cogs leaving the board take
+    // the spare slot vacated by the cog that replaces them when possible.
+    const vacated = [];
+    for (const [from, to] of target) if (from >= SPARE_START && to < BOARD_SIZE) vacated.push(from);
+    for (const keys of free.values()) {
+      for (const q of keys) {
+        if (q >= SPARE_START) { target.set(q, q); continue; }
+        let i = vacated.findIndex(s => target.get(s) === q);
+        if (i < 0) i = 0;
+        if (!vacated.length) return best;
+        target.set(q, vacated.splice(i, 1)[0]);
+      }
+    }
+
+    const res = start.clone();
+    res.cogs = {};
+    for (const [k, cog] of Object.entries(start.cogs)) {
+      const to = target.has(Number(k)) ? target.get(Number(k)) : Number(k);
+      if (res.cogs[to]) return best;
+      const moved = new Cog(cog);
+      moved.key = to;
+      res.cogs[to] = moved;
+    }
+    res._score = null;
+    const a = best.score, b = res.score;
+    for (const f of ["buildRate", "playerXp", "flaggy", "flagSpeed"]) {
+      if (Math.abs(a[f] - b[f]) > 1e-6 * Math.max(1, Math.abs(a[f]))) return best;
+    }
+    return Solver.swapCount(res) < Solver.swapCount(best) ? res : best;
+  }
+
+  // In-game drags needed to reach this layout: every moved cog is one drag,
+  // except that a closed cycle of k cogs takes k - 1 swaps.
+  static swapCount(inventory) {
+    const next = new Map(); // start key -> final key
+    for (const cog of Object.values(inventory.cogs)) {
+      if (cog.key !== cog.initialKey) next.set(cog.initialKey, cog.key);
+    }
+    let swaps = next.size;
+    const seen = new Set();
+    for (const startKey of next.keys()) {
+      if (seen.has(startKey)) continue;
+      let k = startKey;
+      while (next.has(k) && !seen.has(k)) {
+        seen.add(k);
+        k = next.get(k);
+      }
+      if (k === startKey) swaps--;
+    }
+    return swaps;
+  }
 }

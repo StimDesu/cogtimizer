@@ -11,8 +11,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" />
     <link rel="stylesheet" href="style.css?v=7" />
-    <script type="text/javascript" src="i18n.js?v=11"></script>
-    <script type="text/javascript" src="Solver.js?v=5"></script>
+    <script type="text/javascript" src="i18n.js?v=12"></script>
+    <script type="text/javascript" src="Solver.js?v=6"></script>
     <script type="text/javascript" src="CogInventory.js?v=5"></script>
     <script type="text/javascript" src="BoardRenderer.js?v=6"></script>
     <script type="text/javascript" src="StarData.js?v=8"></script>
@@ -748,7 +748,8 @@
         // A new goal must not reuse the best board found for a previous one.
         if (JSON.stringify(weights) !== JSON.stringify(solver.weights)) g.best = null;
         solver.setWeights(weights);
-        const best = await solver.solve(cogInvetory, solveTime);
+        // Same board, but with identical cogs and spare slots chosen to need fewer drags.
+        const best = solver.planMoves(cogInvetory, await solver.solve(cogInvetory, solveTime));
         lastRun.end = best.score;
         document.getElementById("end").innerText = t("Final") + " " + describeScore(best.score);
 
