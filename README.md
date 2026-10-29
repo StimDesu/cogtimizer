@@ -24,6 +24,8 @@ Changes in this fork:
 - Layout fixes: the board no longer breaks apart and the settings panel no longer covers it.
 - English and Russian interface (language switch in the top menu).
 
+Online version: https://stimdesu.github.io/cogtimizer/
+
 Questions and bug reports: [GitHub issues](https://github.com/StimDesu/cogtimizer/issues).
 
 # Credits
