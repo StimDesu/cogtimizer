@@ -110,6 +110,8 @@ const I18N = {
     "A character's own build rate is 3*(level/2+0.7)^1.6, multiplied by the Carpenter bubble per level, so low-level builders gain the most from leveling.": "Собственная скорость персонажа — 3*(уровень/2+0,7)^1,6, умноженная на пузырь Carpenter за каждый уровень, поэтому сильнее всего от прокачки растут персонажи с низким уровнем.",
     "Construction Container post office box is level 0 for {n} of {total} characters": "Ящик почты Construction Container на уровне 0 у {n} из {total} персонажей",
     "{names}. +0.25% base build rate per box level (and Construction EXP after level 100).": "{names}. +0,25% к базовой скорости стройки за уровень ящика (и опыт стройки после 100 уровня).",
+    "The box is in Shipment Unit 2 (second Upgrade tab at the post office).": "Ящик находится в Shipment Unit 2 (вторая вкладка Upgrade на почте).",
+    "The box is in Shipment Unit 2, which opens after 325 completed post office orders. You have {n}, {left} to go.": "Ящик находится в Shipment Unit 2, а он открывается после 325 выполненных заказов почты. У вас {n}, осталось {left}.",
 
     // Checklist: construction EXP
     "nobody": "ни у кого",

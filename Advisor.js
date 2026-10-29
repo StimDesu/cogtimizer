@@ -153,10 +153,17 @@ class Advisor {
       }).join("\n") + "\n" + tr("A character's own build rate is 3*(level/2+0.7)^1.6, multiplied by the Carpenter bubble per level, so low-level builders gain the most from leveling."));
 
     // Post office: Construction Container (box 17), per character
+    // The box sits in Shipment Unit 2, which opens once the completed counts of
+    // all order slots (PostOfficeInfo[1][i][0]) add up to 325.
+    const ordersDone = Advisor._arr(this._json("PostOfficeInfo1", []))
+      .reduce((sum, slot) => sum + (Number(Advisor._arr(slot)[0]) || 0), 0);
     const noBox = chars.filter(c => (Number(c.postOffice[17]) || 0) === 0 && c.place !== "not placed");
     if (noBox.length) {
       add(S, "tip", tr("Construction Container post office box is level 0 for {n} of {total} characters", { n: noBox.length, total: chars.length }),
-        tr("{names}. +0.25% base build rate per box level (and Construction EXP after level 100).", { names: noBox.map(c => c.name).join(", ") }));
+        tr("{names}. +0.25% base build rate per box level (and Construction EXP after level 100).", { names: noBox.map(c => c.name).join(", ") }) + "\n" +
+        (ordersDone >= 325
+          ? tr("The box is in Shipment Unit 2 (second Upgrade tab at the post office).")
+          : tr("The box is in Shipment Unit 2, which opens after 325 completed post office orders. You have {n}, {left} to go.", { n: ordersDone, left: 325 - ordersDone })));
     }
 
     // ---- Construction EXP
