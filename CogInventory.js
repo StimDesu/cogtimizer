@@ -44,7 +44,40 @@ const Crystal_MAP = {
 };
 const INV_ROWS = 8;
 const INV_COLUMNS = 12;
+const BOARD_SIZE = INV_ROWS * INV_COLUMNS;
 const SPARE_START = 108;
+// Boost shapes as [dx, dy] offsets, copied from the game's CustomLists.CogMatrices.
+// row / column / everything are handled separately (the game loops over them).
+const COG_MATRICES = {
+  adjacent: [[0,1],[0,-1],[1,0],[-1,0]],
+  diagonal: [[1,1],[1,-1],[-1,-1],[-1,1]],
+  left: [[-1,0],[-2,0],[-1,1],[-1,-1],[-2,1],[-2,-1]],
+  right: [[1,0],[2,0],[1,1],[1,-1],[2,1],[2,-1]],
+  up: [[0,-1],[0,-2],[-1,-1],[1,-1],[-1,-2],[1,-2]],
+  down: [[0,1],[0,2],[1,1],[-1,1],[1,2],[-1,2]],
+  corners: [[2,2],[2,-2],[-2,2],[-2,-2]],
+  around: [[0,1],[0,-1],[1,0],[-1,0],[1,1],[1,-1],[-1,-1],[-1,1],[0,2],[0,-2],[2,0],[-2,0]],
+};
+const _targetCache = {};
+// Board keys boosted by a cog with the given radius sitting on board key `key`.
+function boostTargets(key, radius) {
+  const cacheKey = key + radius;
+  if (_targetCache[cacheKey]) return _targetCache[cacheKey];
+  const x = key % INV_COLUMNS, y = Math.floor(key / INV_COLUMNS), res = [];
+  if (radius === "row") {
+    for (let i = 0; i < INV_COLUMNS; i++) if (i !== x) res.push(y * INV_COLUMNS + i);
+  } else if (radius === "column") {
+    for (let i = 0; i < INV_ROWS; i++) if (i !== y) res.push(i * INV_COLUMNS + x);
+  } else if (radius === "everything") {
+    for (let i = 0; i < BOARD_SIZE; i++) if (i !== key) res.push(i);
+  } else if (COG_MATRICES[radius]) {
+    for (const [dx, dy] of COG_MATRICES[radius]) {
+      const nx = x + dx, ny = y + dy;
+      if (nx >= 0 && nx < INV_COLUMNS && ny >= 0 && ny < INV_ROWS) res.push(ny * INV_COLUMNS + nx);
+    }
+  }
+  return _targetCache[cacheKey] = res;
+}
 
 class Cog {
   constructor(initialValues = {}) {
@@ -55,6 +88,8 @@ class Cog {
     this.isPlayer = initialValues.isPlayer;
     this.isFlag = initialValues.isFlag;
     this.expGain = initialValues.expGain;
+    // Player construct EXP before board boosts (the save stores the boosted value).
+    this.baseExp = initialValues.baseExp;
     this.flaggy = initialValues.flaggy;
     this.expBonus = initialValues.expBonus;
     this.buildRadiusBoost = initialValues.buildRadiusBoost;
@@ -347,13 +382,26 @@ class CogInventory {
     this.slots = {};
     for (const slot of slots) {
       this.slots[slot.key] = slot;
-      if (!slot.fixed) {
+      // FlagU[96+] is the tiny-cog side strip, not the board.
+      if (!slot.fixed && slot.key < BOARD_SIZE) {
         this.availableSlotKeys.push(slot.key);
       }
     }
     this.cogs = {};
     for (const cog of cogArray) {
       this.cogs[cog.key] = cog;
+    }
+    // The save keeps each player's EXP after board boosts; undo them so moving
+    // players around can be scored the way the game does it.
+    {
+      const grid = this._bonusGrid();
+      let expBonus = 0;
+      for (const key of this.availableSlotKeys) expBonus += (this.get(key) || {}).expBonus || 0;
+      for (const cog of Object.values(this.cogs)) {
+        if (!cog.isPlayer) continue;
+        const boost = cog.key < BOARD_SIZE ? grid[cog.key].exp : 0;
+        cog.baseExp = (cog.expGain || 0) / ((1 + boost / 100) * (1 + expBonus / 100));
+      }
     }
 
     // W7 tiny cogs (CogSm) live in the 24 dedicated side slots (228-239 left,
@@ -392,106 +440,64 @@ class CogInventory {
     return this._board;
   }
   
+  // Per-board-key boost sums (%), like the game's eT/fT/gT/jT totals.
+  _bonusGrid() {
+    const grid = [];
+    for (let i = 0; i < BOARD_SIZE; i++) grid.push({ build: 0, exp: 0, flaggy: 0, flag: 0 });
+    for (const key of this.availableSlotKeys) {
+      const entry = this.get(key);
+      if (!entry || !entry.boostRadius) continue;
+      for (const t of boostTargets(key, entry.boostRadius)) {
+        const bonus = grid[t];
+        bonus.build  += entry.buildRadiusBoost  || 0;
+        bonus.exp    += entry.expRadiusBoost    || 0;
+        bonus.flaggy += entry.flaggyRadiusBoost || 0;
+        bonus.flag   += entry.flagBoost         || 0;
+      }
+    }
+    return grid;
+  }
+
+  // Board totals computed the same way as the game's Construction menu (N.js):
+  //   build rate  = sum(a * (1 + boost%))
+  //   flaggy rate = sum(c * (1 + boost%)) * (1 + 50% per gem shop upgrade)
+  //   player EXP  = base * (1 + boost%) * (1 + sum of "% bonus construct EXP")
+  //   flag speed  = flaggy rate * (1 + boost%) for every placed flag
   get score() {
     if (this._score !== null) return this._score;
 
+    const grid = this._bonusGrid();
     const result = {
       buildRate: 0,
       expBonus: 0,
       flaggy: 0,
+      playerXp: 0,
+      flagSpeed: 0,
       expBoost: 0,
       flagBoost: 0
     };
-
-    const board = this.board;
-    const bonusGrid = Array(INV_ROWS).fill(0).map(() => { return Array(INV_COLUMNS).fill(0).map(() => { return { ...result } })});
-    for (let key of this.availableSlotKeys) {
+    for (const key of this.availableSlotKeys) {
       const entry = this.get(key);
-      if (!entry.boostRadius) continue;
-      const boosted = [];
-      const { x: j, y: i } = entry.position();
-      switch (entry.boostRadius) {
-        case "diagonal":
-          boosted.push([i-1, j-1],[i-1, j+1],[i+1, j-1],[i+1, j+1]);
-          break;
-        case "adjacent":
-          boosted.push([i-1, j],[i, j+1],[i+1, j],[i, j-1]);
-          break;
-        case "up":
-          boosted.push([i-2, j-1],[i-2, j],[i-2, j+1],[i-1, j-1],[i-1, j],[i-1, j+1]);
-          break;
-        case "right":
-          boosted.push([i-1, j+2],[i, j+2],[i+1, j+2],[i-1, j+1],[i, j+1],[i+1, j+1]);
-          break;
-        case "down":
-          boosted.push([i+2, j-1],[i+2, j],[i+2, j+1],[i+1, j-1],[i+1, j],[i+1, j+1]);
-          break;
-        case "left":
-          boosted.push([i-1, j-2],[i, j-2],[i+1, j-2],[i-1, j-1],[i, j-1],[i+1, j-1]);
-          break;
-        case "row":
-          for (let k = 0; k < INV_COLUMNS; k++) {
-            if(j == k) continue;
-            boosted.push([i, k]);
-          }
-          break;
-        case "column":
-          for (let k = 0; k < INV_ROWS; k++) {
-            if(i == k) continue;
-            boosted.push([k, j]);
-          }
-          break;
-        //Fix from https://github.com/Monoblos/cogtimizer/pull/4, thanks https://github.com/Bolero-fk  
-        case "corners":
-          boosted.push([i-2, j-2],[i-2, j+2],[i+2, j-2],[i+2, j+2]);
-          break;
-        case "around":
-          boosted.push([i-2, j],[i-1, j-1],[i-1, j],[i-1, j+1],[i, j-2],[i, j-1],[i, j+1],[i, j+2],[i+1, j-1],[i+1, j],[i+1, j+1],[i+2, j]);
-          break;
-        case "everything":
-          for (let k = 0; k < INV_ROWS; k++) {
-            for (let l = 0; l < INV_COLUMNS; l++) {
-              if(i === k && j === l) continue;
-              boosted.push([k, l]);
-            }
-          }
-          break;
-        default:
-          break;
-      }
-      for (const boostCord of boosted) {
-        const bonus = CogInventory._saveGet(bonusGrid, ...boostCord);
-        if (!bonus) continue;
-        bonus.buildRate += entry.buildRadiusBoost  || 0;
-        bonus.flaggy    += entry.flaggyRadiusBoost || 0;
-        bonus.expBoost  += entry.expRadiusBoost    || 0;
-        bonus.flagBoost += entry.flagBoost         || 0;
-      }
-    }
- 
-    // Bonus grid done, now we can sum everything up
-    for (let key of this.availableSlotKeys) {
-      const entry = this.get(key);
-      result.buildRate += entry.buildRate || 0;
+      if (!entry) continue;
+      const bonus = grid[key];
+      result.buildRate += (entry.buildRate || 0) * (1 + bonus.build / 100);
       result.expBonus += entry.expBonus || 0;
-      result.flaggy += entry.flaggy || 0;
-      const pos = entry.position();
-      const bonus = bonusGrid[pos.y][pos.x];
-      const b = (bonus.buildRate || 0) / 100;
-      result.buildRate += Math.ceil((entry.buildRate || 0) * b);
-      if (entry.isPlayer) {
-        result.expBoost += bonus.expBoost || 0;
-      }
-      const f = (bonus.flaggy || 0) / 100;
-      result.flaggy += Math.ceil((entry.flaggy || 0) * f);
+      result.flaggy += (entry.flaggy || 0) * (1 + bonus.flaggy / 100);
     }
-    for (let key of this.flagPose) {
-      const entry = this.get(key);
-      const pos = entry.position();
-      const bonus = bonusGrid[pos.y][pos.x];
-      result.flagBoost += bonus.flagBoost || 0;
+    result.flaggy *= 1 + (this.flaggyShopUpgrades || 0) * 0.5;
+    for (const cog of Object.values(this.cogs)) {
+      if (!cog.isPlayer) continue;
+      const boost = cog.key < BOARD_SIZE ? grid[cog.key].exp : 0;
+      result.expBoost += boost;
+      const base = cog.baseExp !== undefined ? cog.baseExp : (cog.expGain || 0);
+      result.playerXp += base * (1 + boost / 100) * (1 + result.expBonus / 100);
     }
-    result.flaggy = Math.floor(result.flaggy * (1 + this.flaggyShopUpgrades * 0.5));
+    for (const key of this.flagPose) {
+      if (key >= BOARD_SIZE) continue;
+      const boost = grid[key].flag;
+      result.flagBoost += boost;
+      result.flagSpeed += result.flaggy * (1 + boost / 100);
+    }
     return this._score = result;
   }
   

@@ -7,10 +7,10 @@
 
     <link rel="icon" type="image/x-icon" href="favicon.ico" />
 
-    <link rel="stylesheet" href="style.css" />
-    <script type="text/javascript" src="Solver.js"></script>
-    <script type="text/javascript" src="CogInventory.js"></script>
-    <script type="text/javascript" src="BoardRenderer.js"></script>
+    <link rel="stylesheet" href="style.css?v=3" />
+    <script type="text/javascript" src="Solver.js?v=3"></script>
+    <script type="text/javascript" src="CogInventory.js?v=3"></script>
+    <script type="text/javascript" src="BoardRenderer.js?v=3"></script>
     <script type="text/javascript" src="PlayerRenderer.js"></script>
     <script type="text/javascript" src="Paginator.js"></script>
     
@@ -67,6 +67,7 @@
           <span>savegame</span>
         </div>
         <div class="info">
+          <p class="panel-title" title="Cogs in your spare inventory (not on the board). The solver can move them onto the board.">Spare cogs</p>
           <div id="spare">---Placeholder---</div>
           <div id="sparepage"></div>
           <div class="stats">
@@ -75,12 +76,16 @@
               <p id="buildrate">N/A</p>
             </span>
             <span class="xpbonus">
-              <h3>Player XP Bonus</h3>
+              <h3>Player Construct EXP</h3>
               <p id="xpbonus">N/A</p>
             </span>
             <span class="flaggyrate">
               <h3>Flaggy Rate</h3>
               <p id="flaggyrate">N/A</p>
+            </span>
+            <span class="flagspeed">
+              <h3>Flag Speed</h3>
+              <p id="flagspeed">N/A</p>
             </span>
           </div>
         </div>
@@ -91,16 +96,32 @@
             <input type="number" id="flaggyShop" value="0" style="width:6ch" disabled=true></input>
           </p>
           <p>
-            <label for="buildRate">Build rate score weight</label><br />
-            <input type="number" id="buildRate" value="2" style="width:6ch"></input>
+            <label for="goal">Optimize for</label><br />
+            <select id="goal">
+              <option value="balanced">Balanced (build + EXP + flaggy)</option>
+              <option value="buildRate">Build rate only</option>
+              <option value="playerXp">Player construct EXP only</option>
+              <option value="flaggy">Flaggy rate only</option>
+              <option value="flagSpeed">Flag speed only</option>
+              <option value="custom">Custom weights</option>
+            </select>
           </p>
-          <p>
-            <label for="expBonus">EXP Bonus score weight</label><br />
-            <input type="number" id="expBonus" value="50" style="width:6ch"></input>
+          <p class="weights">Weights are relative: 1 for build and 2 for flaggy means +1% flaggy is worth +2% build.</p>
+          <p class="weights">
+            <label for="buildRate">Build rate weight</label><br />
+            <input type="number" id="buildRate" value="1" step="0.1" style="width:6ch"></input>
           </p>
-          <p>
-            <label for="flaggy">Flaggy rate score weight</label><br />
-            <input type="number" id="flaggy" value="5" style="width:6ch"></input>
+          <p class="weights">
+            <label for="playerXp">Player EXP weight</label><br />
+            <input type="number" id="playerXp" value="1" step="0.1" style="width:6ch"></input>
+          </p>
+          <p class="weights">
+            <label for="flaggy">Flaggy rate weight</label><br />
+            <input type="number" id="flaggy" value="1" step="0.1" style="width:6ch"></input>
+          </p>
+          <p class="weights">
+            <label for="flagSpeed">Flag speed weight</label><br />
+            <input type="number" id="flagSpeed" value="0" step="0.1" style="width:6ch"></input>
           </p>
           <p>
             <label for="solveTime">Solve times (ms)</label><br />
@@ -179,9 +200,42 @@
 
       const ROWS = 8;
       const COLUMNS = 12;
-      const OPTIMIZABLE = ["buildRate", "expBonus", "flaggy"];
-      
-      const getInput = (id) => Number.parseInt(document.getElementById(id).value);
+      const OPTIMIZABLE = ["buildRate", "playerXp", "flaggy", "flagSpeed"];
+      const GOAL_PRESETS = {
+        balanced: { buildRate: 1, playerXp: 1, flaggy: 1, flagSpeed: 0 },
+        // The small weights keep the other stats from dropping when it gains nothing.
+        buildRate: { buildRate: 1, playerXp: 0.01, flaggy: 0.01, flagSpeed: 0 },
+        playerXp: { buildRate: 0.01, playerXp: 1, flaggy: 0.01, flagSpeed: 0 },
+        flaggy: { buildRate: 0.01, playerXp: 0.01, flaggy: 1, flagSpeed: 0 },
+        flagSpeed: { buildRate: 0.01, playerXp: 0.01, flaggy: 0, flagSpeed: 1 },
+      };
+
+      const getInput = (id) => Number.parseFloat(document.getElementById(id).value);
+
+      function applyGoal() {
+        const goal = document.getElementById("goal").value;
+        const preset = GOAL_PRESETS[goal];
+        for (const elem of document.querySelectorAll("#settings .weights")) {
+          elem.style.display = preset ? "none" : "";
+        }
+        if (preset) {
+          for (const key of OPTIMIZABLE) document.getElementById(key).value = preset[key];
+        }
+      }
+      document.getElementById("goal").addEventListener("change", applyGoal);
+
+      function showScore(score, start) {
+        const diff = (key) => start ? mmoifyNumber(score[key] - start[key]) : mmoifyNumber(score[key], false);
+        const pct = (key) => start && start[key] ? ` (${(100 * (score[key] / start[key] - 1)).toFixed(1)}%)` : "";
+        document.getElementById("buildrate").innerText = `${diff("buildRate")}/HR${pct("buildRate")}`;
+        document.getElementById("xpbonus").innerText = `${diff("playerXp")}/HR${pct("playerXp")}, bonus ${mmoifyNumber(score.expBonus, false)}%`;
+        document.getElementById("flaggyrate").innerText = `${diff("flaggy")}/HR${pct("flaggy")}`;
+        document.getElementById("flagspeed").innerText = `${diff("flagSpeed")}/HR${pct("flagSpeed")}`;
+      }
+
+      function describeScore(score) {
+        return `BuildRate: ${mmoifyNumber(score.buildRate, false)}/HR, Player EXP: ${mmoifyNumber(score.playerXp, false)}/HR (+${score.expBonus}%), Flaggy: ${mmoifyNumber(score.flaggy, false)}/HR, Flag speed: ${mmoifyNumber(score.flagSpeed, false)}/HR`;
+      }
       const getFlaggyShop = getInput.bind(null, "flaggyShop");
 
       const createElem = function createElem(tagName, style=undefined) {
@@ -217,9 +271,12 @@
       // boardElem.appendChild(table);
       const boardRow = createElem("div");
       boardRow.className = "board-with-sides";
-      boardRow.appendChild(window.smallLeftRenderer.createHTMLElement());
-      boardRow.appendChild(window.boardRenderer.createHTMLElement());
-      boardRow.appendChild(window.smallRightRenderer.createHTMLElement());
+      const tinyTitle = "Tiny cog slot (World 7). Tiny cogs give a global bonus and are not moved by the solver.";
+      for (const renderer of [window.smallLeftRenderer, window.boardRenderer, window.smallRightRenderer]) {
+        const table = renderer.createHTMLElement();
+        if (renderer !== window.boardRenderer) table.title = tinyTitle;
+        boardRow.appendChild(table);
+      }
       boardElem.appendChild(boardRow);
 
       const stepContainer = createElem("div");
@@ -255,8 +312,6 @@
 
           slider.classList.add("active");
           settingsPage.style.display = "";
-          settingsPage.style.left = borderElem.offsetLeft + "px";
-          settingsPage.style.height = borderElem.offsetHeight + "px";
         }
       })
       
@@ -288,6 +343,8 @@
         // Left strip = slots 228-239 (t=0-11), right strip = 240-251 (t=12-23).
         // Locked slots (FlagUnlock[96+t] !== -11) render like blocked board cells.
         const locked = { blocked: true, fixed: true };
+        // Only show the side strips once at least one tiny-cog slot is unlocked.
+        boardRow.classList.toggle("no-tiny", !inventory.smallSlotUnlocked.some(Boolean));
         for (let row = 0; row < 12; row++) {
           window.smallLeftRenderer.set(row, 0,
             inventory.smallSlotUnlocked[row] ? inventory.smallCogs[228 + row] : locked);
@@ -453,17 +510,16 @@
 
         document.getElementById("solve").disabled = "";
         document.getElementById("steps").innerHTML = "";
-        document.getElementById("buildrate").innerText = mmoifyNumber(initScore.buildRate, false) + "/HR";
-        document.getElementById("xpbonus").innerText = mmoifyNumber(initScore.expBonus, false) + "%";
-        document.getElementById("flaggyrate").innerText = mmoifyNumber(initScore.flaggy, false) + "/HR";
-        
-        for (let oneOption of [...OPTIMIZABLE, "solveTime"]) {
+        showScore(initScore);
+
+        for (let oneOption of ["goal", ...OPTIMIZABLE, "solveTime"]) {
           const val = localStorage.getItem(oneOption);
           if (val) {
             document.getElementById(oneOption).value = val;
           }
         }
-        
+        applyGoal();
+
 
         openCogTab();
       }
@@ -569,18 +625,20 @@
 
         let start = cogInvetory.clone();
 
-        document.getElementById("start").innerText = `Starting BuildRate: ${mmoifyNumber(start.score.buildRate, false)}/HR, EXP: ${mmoifyNumber(start.score.expBonus, false)}%, Flaggy: ${mmoifyNumber(start.score.flaggy, false)}/HR`;
-        const [buildRate, expBonus, flaggy] = [getInput("buildRate"), getInput("expBonus"), getInput("flaggy")];
-        localStorage.setItem("buildRate", buildRate);
-        localStorage.setItem("expBonus", expBonus);
-        localStorage.setItem("flaggy", flaggy);
-        solver.setWeights(getInput("buildRate"), getInput("expBonus"), getInput("flaggy"));
+        document.getElementById("start").innerText = "Starting " + describeScore(start.score);
+        const weights = {};
+        for (const key of OPTIMIZABLE) {
+          weights[key] = getInput(key) || 0;
+          localStorage.setItem(key, weights[key]);
+        }
+        localStorage.setItem("goal", document.getElementById("goal").value);
+        // A new goal must not reuse the best board found for a previous one.
+        if (JSON.stringify(weights) !== JSON.stringify(solver.weights)) g.best = null;
+        solver.setWeights(weights);
         const best = await solver.solve(cogInvetory, solveTime);
-        document.getElementById("end").innerText = `Final BuildRate: ${mmoifyNumber(best.score.buildRate, false)}/HR, EXP: ${mmoifyNumber(best.score.expBonus, false)}%, Flaggy: ${mmoifyNumber(best.score.flaggy, false)}/HR`;
-        
-        document.getElementById("buildrate").innerText = `${mmoifyNumber(best.score.buildRate - start.score.buildRate)}/HR`;
-        document.getElementById("xpbonus").innerText = `${mmoifyNumber(best.score.expBonus - start.score.expBonus)}%`;
-        document.getElementById("flaggyrate").innerText = `${mmoifyNumber(best.score.flaggy - start.score.flaggy)}/HR`;
+        document.getElementById("end").innerText = "Final " + describeScore(best.score);
+
+        showScore(best.score, start.score);
         
         optimalSteps = f.getOptimalSteps(best.board, best.cogs);
         f.printOptimalSteps(optimalSteps);

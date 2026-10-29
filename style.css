@@ -248,6 +248,35 @@ ul.menu > li#cogbtn {
 #result {
     display: none;
     flex-direction: row;
+    /* Scroll sideways on narrow windows instead of squeezing the board. */
+    overflow-x: auto;
+}
+
+#result > * {
+    flex-shrink: 0;
+}
+
+#result > #steps {
+    flex-shrink: 1;
+    min-width: 14em;
+}
+
+/* Keep every board row on one line; inline-block cells used to wrap. */
+table.cogboard tr {
+    display: flex;
+    flex-wrap: nowrap;
+}
+
+.panel-title {
+    font-family: 'PressStart';
+    font-size: .55em;
+    margin: 0 0 .6em 0;
+}
+
+/* Hidden until the account unlocks at least one tiny-cog slot (World 7). */
+.board-with-sides.no-tiny > table.cogboard:first-child,
+.board-with-sides.no-tiny > table.cogboard:last-child {
+    display: none;
 }
 
 #steps {
@@ -310,10 +339,9 @@ table.cogboard tr > td {
 
 #settings {
     background-image: url("assets/settingsbg.png");
-    padding: 0 1em;
+    padding: 1em;
     border-right: 2px solid black;
-    position: absolute;
-    z-index: 1;
+    width: 14em;
 }
 
 #currentBoard {
@@ -399,6 +427,11 @@ hr {
 .stats > .flaggyrate * {
     color: #ffa18d;
     background-image: -webkit-linear-gradient(top, #ffa18d 0%, #ffa18d 51%, #ff7567 51%);
+}
+
+.stats > .flagspeed * {
+    color: #b8f0a0;
+    background-image: -webkit-linear-gradient(top, #b8f0a0 0%, #b8f0a0 51%, #86c870 51%);
 }
 
 @media (prefers-color-scheme: dark) {
