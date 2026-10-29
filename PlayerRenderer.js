@@ -17,7 +17,7 @@ class PlayerRenderer {
 
     constructor() {
         const hats = document.createElement("img");
-        hats.src = "assets/hats2.png";
+        hats.src = "assets/hats_board.png";
         hats.style.visibility = "hidden";
         document.body.appendChild(hats);
         this._hatsImg = hats;
@@ -106,16 +106,12 @@ class PlayerRenderer {
             headH * this.scale
         );
 
+        // `index` is the hat sprite frame (helmet item ID + 2), 14 frames per row.
         const sw = 30,
               sh = 50;
-        const cols = 10,
-              rows = 9;
-
-        // The hat with index 1 is hat 7 in the image
-        // let index = cog.icon.index + 6;
-        index += 6;
-        const row = Math.floor(index / 10);
-        const col = index % 10;
+        const cols = 14;
+        const row = Math.floor(index / cols);
+        const col = index % cols;
 
         const swScaled = sw * this.scale;
         const shScaled = sh * this.scale;
