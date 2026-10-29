@@ -10,11 +10,11 @@
     <!-- Same pixel font with Cyrillic glyphs, used where the bundled PressStart has none -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" />
-    <link rel="stylesheet" href="style.css?v=9" />
-    <script type="text/javascript" src="i18n.js?v=15"></script>
+    <link rel="stylesheet" href="style.css?v=10" />
+    <script type="text/javascript" src="i18n.js?v=16"></script>
     <script type="text/javascript" src="Solver.js?v=7"></script>
     <script type="text/javascript" src="CogInventory.js?v=5"></script>
-    <script type="text/javascript" src="BoardRenderer.js?v=7"></script>
+    <script type="text/javascript" src="BoardRenderer.js?v=8"></script>
     <script type="text/javascript" src="StarData.js?v=8"></script>
     <script type="text/javascript" src="Advisor.js?v=10"></script>
     <script type="text/javascript" src="PlayerRenderer.js"></script>
@@ -141,8 +141,14 @@
           <h4 data-i18n="Misc.">Misc.</h4>
           <hr />
           <p>
-            <label for="showStats" data-i18n="Show cog stats?" data-i18n-title="Numbers on the cogs: yellow = build rate, pink = flaggy, blue = construct EXP; +N% = boost to the cogs around it (green = flag speed). Hover a cog for details." title="Numbers on the cogs: yellow = build rate, pink = flaggy, blue = construct EXP; +N% = boost to the cogs around it (green = flag speed). Hover a cog for details.">Show cog stats?</label>
-            <input type="checkbox" id="showStats" />
+            <label for="cogNumbers" data-i18n="Numbers on cogs" data-i18n-title="Build / Flaggy / EXP: the same number the game shows on each cog in that board view, with boosts from the cogs around it and the game's rounding. All stats: every stat in color. Hover a cog for details." title="Build / Flaggy / EXP: the same number the game shows on each cog in that board view, with boosts from the cogs around it and the game's rounding. All stats: every stat in color. Hover a cog for details.">Numbers on cogs</label><br />
+            <select id="cogNumbers">
+              <option value="off" data-i18n="None">None</option>
+              <option value="build" data-i18n="Build (as in game)">Build (as in game)</option>
+              <option value="flaggy" data-i18n="Flaggy (as in game)">Flaggy (as in game)</option>
+              <option value="exp" data-i18n="EXP (as in game)">EXP (as in game)</option>
+              <option value="all" data-i18n="All stats" data-i18n-title="Numbers on the cogs: yellow = build rate, pink = flaggy, blue = construct EXP; +N% = boost to the cogs around it (green = flag speed). Hover a cog for details." title="Numbers on the cogs: yellow = build rate, pink = flaggy, blue = construct EXP; +N% = boost to the cogs around it (green = flag speed). Hover a cog for details.">All stats</option>
+            </select>
           </p>
           <p>
             <label for="showSolved" data-i18n="Directly show solved board">Directly show solved board</label>
@@ -314,13 +320,13 @@
       boardElem.appendChild(guideElem);
       const guide = { active: false, done: false };
 
-      // "Show cog stats?": numbers on the cogs and in the step list, redrawn right away.
-      const showStatsBox = document.getElementById("showStats");
-      showStatsBox.checked = localStorage.getItem("showStats") === "1";
-      BoardRenderer.showStats = showStatsBox.checked;
-      showStatsBox.addEventListener("change", () => {
-        BoardRenderer.showStats = showStatsBox.checked;
-        localStorage.setItem("showStats", showStatsBox.checked ? "1" : "0");
+      // "Numbers on cogs": game-style or full stats on the cogs and in the step list, redrawn right away.
+      const numbersSelect = document.getElementById("cogNumbers");
+      numbersSelect.value = localStorage.getItem("cogNumbers") || (localStorage.getItem("showStats") === "1" ? "all" : "off");
+      BoardRenderer.numbers = numbersSelect.value;
+      numbersSelect.addEventListener("change", () => {
+        BoardRenderer.numbers = numbersSelect.value;
+        localStorage.setItem("cogNumbers", numbersSelect.value);
         for (const renderer of [window.boardRenderer, window.spareRenderer, window.smallLeftRenderer, window.smallRightRenderer]) {
           renderer.rerender();
         }
@@ -390,6 +396,12 @@
       }
       
       f.printBoard = (board, cord1={},cord2={}) => {
+        // Boosts from surrounding cogs, for the game-style numbers on the board.
+        const grid = board.inventory._bonusGrid();
+        for (let key = 0; key < grid.length; key++) {
+          const cog = board.inventory.cogs[key];
+          if (cog) cog.boost = grid[key];
+        }
         for (let i = 0; i < board.length; i++) {
           const row = createElem("tr");
 
@@ -418,6 +430,7 @@
       f.printSpare = (inventory) => {
         for (let i = 108; i < 228; i++) {
           const cog = inventory.cogs[i] || inventory.smallCogs[i];
+          if (cog) cog.boost = null;
           const index = (i - 108);
           const row = Math.floor(index / 3);
           const col = index % 3;
@@ -553,7 +566,7 @@
 
       f.printOptimalSteps = (steps) => {
         document.getElementById("steps").innerHTML = "";
-        const showStats = document.getElementById("showStats").checked;
+        const showStats = BoardRenderer.numbers !== "off";
 
         for (let i = 0; i < steps.length; i++) {
           const step = steps[i];

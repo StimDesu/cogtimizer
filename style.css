@@ -765,3 +765,15 @@ td.toMove[data-mark]::before {
 .cogstats .s-flaggy { color: #ff8fb1; }
 .cogstats .s-exp { color: #7fd4ff; }
 .cogstats .s-flag { color: #8dff7a; }
+
+/* Game-style number in the bottom-right corner of a cog (Build / Flaggy / EXP view). */
+.gamenumber {
+    position: absolute;
+    right: 2px;
+    bottom: 1px;
+    pointer-events: none;
+    color: white;
+    font: 8px/8px 'PressStart', 'Press Start 2P', monospace;
+    text-shadow: 1px 1px 0 #000, -1px 1px 0 #000, 1px -1px 0 #000, -1px -1px 0 #000;
+    z-index: 2;
+}
