@@ -273,28 +273,21 @@ class CogInventory {
           window.player._colorHead(.5, .91, .92);
         }
 
-        const equipmentSlot = `EquipOrder_${i}`;
-        const equipment = save[equipmentSlot];
+        // Same choice as the game's cog board: the premium helmet (equipment
+        // slot 8) unless it is empty or EquipmentHats38, else the normal helmet
+        // (slot 0); the hat sprite frame is the item's ID + 2.
+        const equipment = save[`EquipOrder_${i}`] || [];
+        const worn = equipment[0] || {};
+        const premium = worn[8];
+        const helmet = premium && premium !== "Blank" && premium !== "EquipmentHats38" ? premium : worn[0];
         let hatFound = false;
-
-        equipment.forEach((slots) => {
-          const length = slots.length;
-          for (let i = 0; i < length; i++) {
-            const eqName = slots[i];
-            if (eqName.indexOf("Hats") !== -1) {
-              const match = eqName.match(/EquipmentHats(\d+)(?:_x1)?/);
-              if (match.length === 2) {
-                const index = parseInt(match[1]);
-                hatIcons[v] = {
-                  type: "hat",
-                  path: window.player.render(index)
-                };
-                hatFound = true;
-              }
-              break;
-            }
-          }
-        });
+        if (helmet && helmet !== "Blank" && typeof HAT_IDS !== "undefined" && HAT_IDS[helmet] !== undefined) {
+          hatIcons[v] = {
+            type: "hat",
+            path: window.player.render(HAT_IDS[helmet] + 2)
+          };
+          hatFound = true;
+        }
         if (!hatFound) {
           hatIcons[v] = {
             type: "head",

@@ -19,6 +19,7 @@ Changes in this fork:
   characters off the board or in cog makers, construction levels, Carpenter / Call Me Bob bubbles,
   construction vials, Seesaw statue, Sawsaw Salala star sign, post office box, gem shop and achievement bonuses.
 - Star signs: where the Telescope is, its quest, and the path to Chronus Cosmos / Hydron Cosmos / Sawsaw Salala.
+- Character heads on the board wear the same hat as in the game (premium hat first, sprite frame from the game data).
 - "Numbers on cogs" setting: the same number the game shows on each cog (Build / Flaggy / EXP view, with boosts from the cogs around it and the game's own rounding), or every stat in color.
 - "Step by step" button: shows one swap at a time with both slots highlighted and numbered, so the in-game drags are easy to follow.
 - "Max swaps" setting: the best board reachable in at most N drags, with the share of the full gain it keeps. The same board is also reached with as few swaps as possible.
