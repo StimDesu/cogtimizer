@@ -1,5 +1,5 @@
 @font-face {
-    font-family: 'PressStart', 'Press Start 2P', monospace;
+    font-family: 'PressStart';
     src:
         url('assets/press-start.k.ttf') format('truetype');
 }
@@ -50,18 +50,48 @@ body {
 .options > button {
     font-family: 'PressStart', 'Press Start 2P', monospace;
     font-size: 10px;
+    line-height: 12px;
+    color: white;
+    text-shadow: 1px 1px 0 black, -1px 1px 0 black, 1px -1px 0 black, -1px -1px 0 black;
     border: none;
+    /* btn_bg.png is only the dark top/bottom edge; the colour shows through. */
+    background-color: #8a5d36;
     background-image: url("assets/btn_bg.png");
     height: 37px;
-    /* padding: 14px 0 0 0; */
     padding: 2px 0;
     margin-top: auto;
     display: flex;
     flex-direction: row;
+    align-items: stretch;
     margin-right: 5px;
+    white-space: nowrap;
+}
+
+/* Middle part: text (and the slider) centred inside the button. */
+.options > button > div:nth-child(2) {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    padding: 0 8px;
 }
 
 .options > button:not(:disabled):hover {
+    background-color: #6f4a29;
+}
+
+.options > button:disabled {
+    cursor: default;
+    opacity: .7;
+}
+
+/* Wide enough for "Optimizing..." / "Fitting limit..." so the button doesn't jump while solving. */
+#solvetext {
+    min-width: 16ch;
+}
+
+.options > button:not(:disabled) {
     cursor: pointer;
 }
 

@@ -116,7 +116,7 @@ const I18N = {
     "shape: column": "в том же столбце",
     "shape: everything": "на всей доске",
     "Find the best board you can reach with at most this many drags in the game.": "Подобрать лучшую доску, до которой можно дойти не больше чем за столько перетаскиваний в игре.",
-    "Fitting the swap limit...": "Укладываюсь в лимит...",
+    "Fitting limit...": "Под лимит...",
     "Swap limit {n}: {kept}% of the possible gain kept ({full} swaps without the limit).": "Лимит {n} перестановок: сохранено {kept}% возможного прироста (без лимита нужно {full}).",
     "Without the limit:": "Без лимита было бы:",
     "Step {n} of {total}": "Шаг {n} из {total}",
