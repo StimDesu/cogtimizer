@@ -1,6 +1,6 @@
 // Generated from the game's ItemDefinitions: helmet item -> its "ID".
 // On the cog board the game draws the hat sprite (assets/hats_board.png, the
-// game's sprite 32 animation "1", 30x50 frames, 14 per row) at frame ID + 2.
+// game's sprite 32, first animation, 30x50 frames, 14 per row) at frame ID + 2.
 const HAT_IDS = {
   "DungEquipmentHats0": 67,
   "DungEquipmentHats1": 68,
