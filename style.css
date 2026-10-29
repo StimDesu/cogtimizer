@@ -742,3 +742,26 @@ td.toMove[data-mark]::before {
     max-width: 640px;
     margin: .4em 0 0;
 }
+
+/* "Show cog stats?": short colored numbers on top of each cog. */
+.cogstats {
+    position: absolute;
+    left: 1px;
+    bottom: 1px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    pointer-events: none;
+    font: bold 9px/9px Arial, sans-serif;
+    text-shadow: 1px 1px 0 #000, -1px 1px 0 #000, 1px -1px 0 #000, -1px -1px 0 #000;
+    z-index: 2;
+}
+
+.cogstats i {
+    font-style: normal;
+}
+
+.cogstats .s-build { color: #ffe066; }
+.cogstats .s-flaggy { color: #ff8fb1; }
+.cogstats .s-exp { color: #7fd4ff; }
+.cogstats .s-flag { color: #8dff7a; }

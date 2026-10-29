@@ -10,11 +10,11 @@
     <!-- Same pixel font with Cyrillic glyphs, used where the bundled PressStart has none -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" />
-    <link rel="stylesheet" href="style.css?v=8" />
-    <script type="text/javascript" src="i18n.js?v=13"></script>
+    <link rel="stylesheet" href="style.css?v=9" />
+    <script type="text/javascript" src="i18n.js?v=14"></script>
     <script type="text/javascript" src="Solver.js?v=7"></script>
     <script type="text/javascript" src="CogInventory.js?v=5"></script>
-    <script type="text/javascript" src="BoardRenderer.js?v=6"></script>
+    <script type="text/javascript" src="BoardRenderer.js?v=7"></script>
     <script type="text/javascript" src="StarData.js?v=8"></script>
     <script type="text/javascript" src="Advisor.js?v=10"></script>
     <script type="text/javascript" src="PlayerRenderer.js"></script>
@@ -141,7 +141,7 @@
           <h4 data-i18n="Misc.">Misc.</h4>
           <hr />
           <p>
-            <label for="showStats" data-i18n="Show cog stats?">Show cog stats?</label>
+            <label for="showStats" data-i18n="Show cog stats?" data-i18n-title="Numbers on the cogs: yellow = build rate, pink = flaggy, blue = construct EXP; +N% = boost to the cogs around it (green = flag speed). Hover a cog for details." title="Numbers on the cogs: yellow = build rate, pink = flaggy, blue = construct EXP; +N% = boost to the cogs around it (green = flag speed). Hover a cog for details.">Show cog stats?</label>
             <input type="checkbox" id="showStats" />
           </p>
           <p>
@@ -313,6 +313,23 @@
       guideElem.id = "stepguide";
       boardElem.appendChild(guideElem);
       const guide = { active: false, done: false };
+
+      // "Show cog stats?": numbers on the cogs and in the step list, redrawn right away.
+      const showStatsBox = document.getElementById("showStats");
+      showStatsBox.checked = localStorage.getItem("showStats") === "1";
+      BoardRenderer.showStats = showStatsBox.checked;
+      showStatsBox.addEventListener("change", () => {
+        BoardRenderer.showStats = showStatsBox.checked;
+        localStorage.setItem("showStats", showStatsBox.checked ? "1" : "0");
+        for (const renderer of [window.boardRenderer, window.spareRenderer, window.smallLeftRenderer, window.smallRightRenderer]) {
+          renderer.rerender();
+        }
+        if (optimalSteps && optimalSteps.length) {
+          f.printOptimalSteps(optimalSteps);
+          if (guide.done) f.finishGuide();
+          else stepsPage.goto(stepsPage.pageIndex);
+        }
+      });
 
       // What the swap limit costs compared with the unlimited solution.
       const limitElem = createElem("p");
