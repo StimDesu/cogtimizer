@@ -141,12 +141,13 @@ class BoardRenderer {
       } else if (cog.isPlayer) {
         div.style.backgroundImage = `url("${cog.icon.path}")`;
         div.style["background-size"] = `contain`;
-        div.innerHTML = "";
+        div.innerHTML = BoardRenderer.showStats ? BoardRenderer.statsHtml(cog) : "";
       }	else {
         div.style.removeProperty("background-size");
         div.style.backgroundImage = `url("${cog.icon.path}")`;
-        div.innerHTML = "";
+        div.innerHTML = BoardRenderer.showStats ? BoardRenderer.statsHtml(cog) : "";
       }
+      col.title = BoardRenderer.tooltip(cog);
     } else {
       if (cog.isFlag) {
         col.style.backgroundImage = `url("icons/cogs/flag.png")`;
@@ -199,5 +200,53 @@ class BoardRenderer {
   get(row, column) {
     const index = this._getIndex(row, column);
     return this.board[index];
+  }
+
+  // Re-draw the visible slots, e.g. after the "Show cog stats" setting changed.
+  rerender() {
+    for (const slot of this.board) {
+      if (slot.elem) this._render(slot);
+    }
+  }
+
+  // "Show cog stats?" setting: numbers drawn on top of each cog.
+  static showStats = false;
+
+  static _num(n) {
+    n = Number(n) || 0;
+    return n >= 1000 ? (n / 1000).toFixed(1) + "K" : String(Math.round(n));
+  }
+
+  // Up to four short colored lines: build rate, flaggy, % bonus construct EXP,
+  // and "+N%" for a boost given to the cogs in the shape around this one.
+  static statsHtml(cog) {
+    const lines = [];
+    const n = BoardRenderer._num;
+    if (cog.buildRate) lines.push(`<i class="s-build">${n(cog.buildRate)}</i>`);
+    if (cog.isPlayer && cog.expGain) lines.push(`<i class="s-exp">${n(cog.expGain)}</i>`);
+    if (cog.flaggy) lines.push(`<i class="s-flaggy">${n(cog.flaggy)}</i>`);
+    if (cog.expBonus) lines.push(`<i class="s-exp">${n(cog.expBonus)}%</i>`);
+    if (cog.buildRadiusBoost) lines.push(`<i class="s-build">+${n(cog.buildRadiusBoost)}%</i>`);
+    if (cog.flaggyRadiusBoost) lines.push(`<i class="s-flaggy">+${n(cog.flaggyRadiusBoost)}%</i>`);
+    if (cog.expRadiusBoost) lines.push(`<i class="s-exp">+${n(cog.expRadiusBoost)}%</i>`);
+    if (cog.flagBoost) lines.push(`<i class="s-flag">+${n(cog.flagBoost)}%</i>`);
+    return lines.length ? `<div class="cogstats">${lines.join("")}</div>` : "";
+  }
+
+  // Full description shown when hovering a cog.
+  static tooltip(cog) {
+    if (!cog || cog.blocked || !cog.icon || cog.icon.type === "blank") return "";
+    const tr = typeof t === "function" ? t : (s, v) => s.replace(/\{(\w+)\}/g, (m, k) => v[k]);
+    const shape = cog.boostRadius ? tr("shape: " + cog.boostRadius) : "";
+    const lines = [];
+    if (cog.buildRate) lines.push(tr("Build rate: {v}/HR", { v: Math.round(cog.buildRate) }));
+    if (cog.isPlayer && cog.expGain) lines.push(tr("Player construct EXP: {v}/HR", { v: Math.round(cog.expGain) }));
+    if (cog.flaggy) lines.push(tr("Flaggy rate: {v}/HR", { v: Math.round(cog.flaggy) }));
+    if (cog.expBonus) lines.push(tr("+{v}% bonus construct EXP (whole board)", { v: cog.expBonus }));
+    if (cog.buildRadiusBoost) lines.push(tr("+{v}% build rate to cogs {shape}", { v: cog.buildRadiusBoost, shape }));
+    if (cog.flaggyRadiusBoost) lines.push(tr("+{v}% flaggy rate to cogs {shape}", { v: cog.flaggyRadiusBoost, shape }));
+    if (cog.expRadiusBoost) lines.push(tr("+{v}% player construct EXP to characters {shape}", { v: cog.expRadiusBoost, shape }));
+    if (cog.flagBoost) lines.push(tr("+{v}% flag speed to flags {shape}", { v: cog.flagBoost, shape }));
+    return lines.join("\n");
   }
 }
