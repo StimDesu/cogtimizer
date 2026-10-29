@@ -141,11 +141,11 @@ class BoardRenderer {
       } else if (cog.isPlayer) {
         div.style.backgroundImage = `url("${cog.icon.path}")`;
         div.style["background-size"] = `contain`;
-        div.innerHTML = BoardRenderer.showStats ? BoardRenderer.statsHtml(cog) : "";
+        div.innerHTML = BoardRenderer.numbersHtml(cog);
       }	else {
         div.style.removeProperty("background-size");
         div.style.backgroundImage = `url("${cog.icon.path}")`;
-        div.innerHTML = BoardRenderer.showStats ? BoardRenderer.statsHtml(cog) : "";
+        div.innerHTML = BoardRenderer.numbersHtml(cog);
       }
       col.title = BoardRenderer.tooltip(cog);
     } else {
@@ -209,8 +209,57 @@ class BoardRenderer {
     }
   }
 
-  // "Show cog stats?" setting: numbers drawn on top of each cog.
-  static showStats = false;
+  // "Numbers on cogs" setting: "off", "all" (every stat, colored) or one of the
+  // game's own board views "build" / "flaggy" / "exp".
+  static numbers = "off";
+
+  static numbersHtml(cog) {
+    const mode = BoardRenderer.numbers;
+    if (mode === "all") return BoardRenderer.statsHtml(cog);
+    if (mode === "build" || mode === "flaggy" || mode === "exp") return BoardRenderer.gameNumberHtml(cog, mode);
+    return "";
+  }
+
+  // The number the game draws in the corner of a cog (N.js, Construction board):
+  // board cogs show build / flaggy with the boosts from cogs around them,
+  // spare cogs show their own value, EXP view shows "% bonus construct EXP".
+  // `cog.boost` is set by the page when the board is drawn (null in the spare).
+  static gameValue(cog, mode) {
+    const boost = cog.boost || { build: 0, flaggy: 0 };
+    if (mode === "build") return (Number(cog.buildRate) || 0) * (1 + boost.build / 100);
+    if (mode === "flaggy") return (Number(cog.flaggy) || 0) * (1 + boost.flaggy / 100);
+    return Number(cog.expBonus) || 0;
+  }
+
+  static gameNumberHtml(cog, mode) {
+    const text = BoardRenderer.notateBig(BoardRenderer.gameValue(cog, mode)) + (mode === "exp" ? "%" : "");
+    return `<div class="gamenumber">${text}</div>`;
+  }
+
+  // Port of the game's _customBlock_NotateNumber(value, "Big").
+  static notateBig(e) {
+    if (e < 1e3) return "" + Math.floor(e);
+    if (e < 1e4) return Math.ceil(e / 10) / 100 + "K";
+    if (e < 1e5) return Math.ceil(e / 100) / 10 + "K";
+    if (e < 1e6) return Math.ceil(e / 1e3) + "K";
+    if (e < 1e7) return Math.ceil(e / 1e4) / 100 + "M";
+    if (e < 1e8) return Math.ceil(e / 1e5) / 10 + "M";
+    if (e < 1e9) return Math.ceil(e / 1e6) + "M";
+    if (e < 1e10) return Math.ceil(e / 1e7) / 100 + "B";
+    if (e < 1e11) return Math.ceil(e / 1e8) / 10 + "B";
+    if (e < 1e12) return Math.ceil(e / 1e9) + "B";
+    if (e < 1e13) return Math.ceil(e / 1e10) / 100 + "T";
+    if (e < 1e14) return Math.ceil(e / 1e11) / 10 + "T";
+    if (e < 1e15) return Math.ceil(e / 1e12) + "T";
+    if (e < 1e16) return Math.ceil(e / 1e13) / 100 + "Q";
+    if (e < 1e17) return Math.ceil(e / 1e14) / 10 + "Q";
+    if (e < 1e18) return Math.ceil(e / 1e15) + "Q";
+    if (e < 1e19) return Math.ceil(e / 1e16) / 100 + "QQ";
+    if (e < 1e20) return Math.ceil(e / 1e17) / 10 + "QQ";
+    if (e < 1e21) return Math.ceil(e / 1e18) + "QQ";
+    const exp = Math.floor(Math.log10(e));
+    return Math.floor(e / Math.pow(10, exp) * 100) / 100 + "e" + exp;
+  }
 
   static _num(n) {
     n = Number(n) || 0;
