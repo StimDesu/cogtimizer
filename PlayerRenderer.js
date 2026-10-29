@@ -20,7 +20,7 @@ class PlayerRenderer {
 
     constructor() {
         const hats = document.createElement("img");
-        hats.src = "assets/hats_board.png";
+        hats.src = "assets/hats_board.png?v=2";
         hats.style.visibility = "hidden";
         document.body.appendChild(hats);
         this._hatsImg = hats;
