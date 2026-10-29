@@ -144,6 +144,27 @@ const I18N = {
     "+5% build speed.": "+5% к скорости стройки.",
     "Have 20 grey (Nooby) cogs on the board at once for +5% build speed. You have {n} now.": "Поставьте на доску одновременно 20 серых (Nooby) шестерёнок — +5% к скорости стройки. Сейчас стоит {n}.",
 
+    // Checklist: star signs
+    "Star signs": "Знаки зодиака",
+    "Telescope quest done": "Квест телескопа выполнен",
+    "Telescope quest not finished": "Квест телескопа не выполнен",
+    "The Telescope is at the top of the big tree in Blunder Hills (entrance from the Slimes map). There you change star signs; finishing its quest lets you complete constellations around the world.": "Телескоп стоит на вершине большого дерева в Blunder Hills (вход с карты слаймов). У него меняют знаки зодиака, а его квест открывает созвездия по всему миру.",
+    "To finish it, complete the constellation at {map}: {req}.": "Чтобы его закончить, выполните созвездие на карте {map}: {req}.",
+    "Star points to spend: {n}": "Свободных очков звёзд: {n}",
+    "Spend them on the star chart at the Telescope.": "Их тратят на звёздной карте у Телескопа.",
+    "lets every character wear one more star sign": "+1 слот под знак каждому персонажу",
+    "+25% Construction EXP": "+25% опыта стройки",
+    "{sign} unlocked": "{sign} открыт",
+    "{sign} ({why}): {n} signs to unlock, {cost} star points": "{sign} ({why}): открыть ещё {n} знаков, нужно {cost} очков звёзд",
+    "Path: {path}. You have {points} points.": "Путь: {path}. Сейчас очков: {points}.",
+    "Constellations completed: {done} of {total}": "Созвездий выполнено: {done} из {total}",
+    "{earned} star points earned, {left} more available from the rest.": "Получено {earned} очков звёзд, остальные созвездия дадут ещё {left}.",
+    "Finish the Telescope quest first.": "Сначала закончите квест телескопа.",
+    "Constellations ready to claim: {n}": "Созвездия, готовые к получению награды: {n}",
+    "Enough characters already did these; visit the star to get the points.": "Нужное число персонажей уже выполнило условие — подойдите к звезде, чтобы получить очки.",
+    "Constellations left in World {w}: {n}": "Невыполненные созвездия в мире {w}: {n}",
+    "{map}: {req} — {have}/{need} characters, +{pts} points": "{map}: {req} — {have}/{need} персонажей, +{pts} очков",
+
     // Checklist: flaggy & board
     "Gem shop flaggy upgrades: {n}": "Улучшения флагги в магазине самоцветов: {n}",
     "Each one gives +50% flaggy rate on the whole board.": "Каждое даёт +50% флагги всей доске.",

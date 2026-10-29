@@ -18,6 +18,8 @@ Changes in this fork:
 - Construction checklist read from the save: Redox Rates / Sharper Saws talent levels,
   characters off the board or in cog makers, construction levels, Carpenter / Call Me Bob bubbles,
   construction vials, Seesaw statue, Sawsaw Salala star sign, post office box, gem shop and achievement bonuses.
+- Star signs: Telescope quest, free star points, paths to Chronus Cosmos / Hydron Cosmos / Sawsaw Salala
+  and every constellation left, with its map, requirement and reward.
 - Layout fixes: the board no longer breaks apart and the settings panel no longer covers it.
 - English and Russian interface (language switch in the top menu).
 

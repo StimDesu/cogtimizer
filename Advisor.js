@@ -203,6 +203,9 @@ class Advisor {
         done ? tr("+5% build speed.") : tr("Have 20 grey (Nooby) cogs on the board at once for +5% build speed. You have {n} now.", { n: greyOnBoard }));
     }
 
+    // ---- Star signs
+    if (typeof STAR_CHART !== "undefined") this._adviseStarSigns(add, chars);
+
     // ---- Flaggy and the board
     const F = "Flaggy & board";
     const gems = this._json("GemItemsPurchased", []);
@@ -224,6 +227,80 @@ class Advisor {
     add(F, "ok", tr("Cog inventory: gem shop +{gem}, Bubonic Burp vial {vial}", { gem: 4 * cogInvGem, vial: burp > 0 ? "+" + burp : tr("not unlocked") }),
       tr("More spare slots let you keep better cogs for later."));
     return out;
+  }
+
+  // Star chart and constellations. Star points (OptionsListAccount[40]) come from
+  // constellations and unlock signs on the chart; each node needs its parent first.
+  _adviseStarSigns(add, chars) {
+    const Z = "Star signs";
+    const sign = id => STAR_SIGN_NAMES[id] || "#" + id;
+    const unlocked = this._json("StarSg", {});
+    const isUnlocked = node => unlocked[sign(STAR_CHART[node][0]).replace(/ /g, "_")] !== undefined;
+    const points = Number(Advisor._arr(this.save.OptLacc)[40]) || 0;
+
+    // Telescope quest: changing signs and using constellations needs it done.
+    const telescope = chars.map(c => Number(this._json("QuestComplete_" + c.index, {}).Telescope1));
+    const telescopeDone = telescope.some(v => v === 1);
+    add(Z, telescopeDone ? "ok" : "warn",
+      telescopeDone ? tr("Telescope quest done") : tr("Telescope quest not finished"),
+      tr("The Telescope is at the top of the big tree in Blunder Hills (entrance from the Slimes map). There you change star signs; finishing its quest lets you complete constellations around the world.") +
+      (telescopeDone ? "" : "\n" + tr("To finish it, complete the constellation at {map}: {req}.", { map: CONSTELLATIONS[1][0], req: CONSTELLATIONS[1][3].replace(/\.+$/, "") })));
+
+    add(Z, points > 0 ? "tip" : "ok", tr("Star points to spend: {n}", { n: points }),
+      tr("Spend them on the star chart at the Telescope."));
+
+    // Paths to the signs worth aiming for.
+    const targets = [
+      ["Chronus Cosmos", tr("lets every character wear one more star sign")],
+      ["Hydron Cosmos", tr("lets every character wear one more star sign")],
+      ["Sawsaw Salala", tr("+25% Construction EXP")],
+    ];
+    for (const [name, why] of targets) {
+      const node = STAR_CHART.findIndex(n => sign(n[0]) === name);
+      if (node < 0) continue;
+      const path = [];
+      for (let i = node, guard = 0; guard < 40; guard++) {
+        path.unshift(i);
+        const parent = STAR_CHART[i][1];
+        if (i === 0 || parent === i) break;
+        i = parent;
+      }
+      const missing = path.filter(i => !isUnlocked(i));
+      if (missing.length === 0) {
+        add(Z, "ok", tr("{sign} unlocked", { sign: name }), why);
+        continue;
+      }
+      const cost = missing.reduce((sum, i) => sum + STAR_CHART[i][2], 0);
+      add(Z, "tip", tr("{sign} ({why}): {n} signs to unlock, {cost} star points", { sign: name, why, n: missing.length, cost }),
+        tr("Path: {path}. You have {points} points.", { path: missing.map(i => `${sign(STAR_CHART[i][0])} (${STAR_CHART[i][2]})`).join(" → "), points }));
+    }
+
+    // Constellations: progress[i] = [characters that did it, claimed flag].
+    const progress = this._json("SSprog", []);
+    let done = 0, total = 0, earned = 0, left = 0;
+    const ready = [], remaining = {};
+    CONSTELLATIONS.forEach((c, i) => {
+      if (!c) return;
+      total++;
+      const [chars_, claimed] = Advisor._arr(progress[i]);
+      const have = String(chars_ || "").replace(/[^a-z]/g, "").length;
+      if (Number(claimed) === 1) { done++; earned += c[2]; return; }
+      left += c[2];
+      const world = i < 10 ? 1 : i < 20 ? 2 : i < 31 ? 3 : i < 41 ? 4 : i < 51 ? 5 : 6;
+      const line = tr("{map}: {req} — {have}/{need} characters, +{pts} points", { map: c[0], req: c[3].replace(/\.+$/, ""), have, need: c[1], pts: c[2] });
+      if (have >= c[1]) ready.push(line);
+      (remaining[world] = remaining[world] || []).push(line);
+    });
+    add(Z, done === total ? "ok" : "tip", tr("Constellations completed: {done} of {total}", { done, total }),
+      tr("{earned} star points earned, {left} more available from the rest.", { earned, left }));
+    if (ready.length) {
+      add(Z, "warn", tr("Constellations ready to claim: {n}", { n: ready.length }),
+        tr("Enough characters already did these; visit the star to get the points.") +
+        (telescopeDone ? "" : " " + tr("Finish the Telescope quest first.")) + "\n" + ready.join("\n"));
+    }
+    for (const world of Object.keys(remaining)) {
+      add(Z, "tip", tr("Constellations left in World {w}: {n}", { w: world, n: remaining[world].length }), remaining[world].join("\n"));
+    }
   }
 }
 
