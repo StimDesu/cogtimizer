@@ -11,7 +11,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" />
     <link rel="stylesheet" href="style.css?v=9" />
-    <script type="text/javascript" src="i18n.js?v=14"></script>
+    <script type="text/javascript" src="i18n.js?v=15"></script>
     <script type="text/javascript" src="Solver.js?v=7"></script>
     <script type="text/javascript" src="CogInventory.js?v=5"></script>
     <script type="text/javascript" src="BoardRenderer.js?v=7"></script>
@@ -87,10 +87,10 @@
               <p id="xpbonus">N/A</p>
             </span>
             <span class="flaggyrate">
-              <h3 data-i18n="Flaggy Rate">Flaggy Rate</h3>
+              <h3 data-i18n="Flaggy Rate" data-i18n-title="The same number as Flaggy Rate in the game." title="The same number as Flaggy Rate in the game.">Flaggy Rate</h3>
               <p id="flaggyrate">N/A</p>
             </span>
-            <span class="flagspeed">
+            <span class="flagspeed" data-i18n-title="Not shown in the game. How much flaggy all placed flags get per hour together: each flag fills at the Flaggy Rate, faster if a cog with a flag speed bonus covers it. Without such cogs it is just Flaggy Rate times the number of flags." title="Not shown in the game. How much flaggy all placed flags get per hour together: each flag fills at the Flaggy Rate, faster if a cog with a flag speed bonus covers it. Without such cogs it is just Flaggy Rate times the number of flags.">
               <h3 data-i18n="Flag Speed">Flag Speed</h3>
               <p id="flagspeed">N/A</p>
             </span>
@@ -109,7 +109,7 @@
               <option value="buildRate" data-i18n="Build rate only">Build rate only</option>
               <option value="playerXp" data-i18n="Player construct EXP only">Player construct EXP only</option>
               <option value="flaggy" data-i18n="Flaggy rate only">Flaggy rate only</option>
-              <option value="flagSpeed" data-i18n="Flag speed only">Flag speed only</option>
+              <option value="flagSpeed" data-i18n="Flag speed only" data-i18n-title="Not shown in the game. How much flaggy all placed flags get per hour together: each flag fills at the Flaggy Rate, faster if a cog with a flag speed bonus covers it. Without such cogs it is just Flaggy Rate times the number of flags." title="Not shown in the game. How much flaggy all placed flags get per hour together: each flag fills at the Flaggy Rate, faster if a cog with a flag speed bonus covers it. Without such cogs it is just Flaggy Rate times the number of flags.">Flag speed only</option>
               <option value="custom" data-i18n="Custom weights">Custom weights</option>
             </select>
           </p>
@@ -127,7 +127,7 @@
             <input type="number" id="flaggy" value="1" step="0.1" style="width:6ch"></input>
           </p>
           <p class="weights">
-            <label for="flagSpeed" data-i18n="Flag speed weight">Flag speed weight</label><br />
+            <label for="flagSpeed" data-i18n="Flag speed weight" data-i18n-title="Not shown in the game. How much flaggy all placed flags get per hour together: each flag fills at the Flaggy Rate, faster if a cog with a flag speed bonus covers it. Without such cogs it is just Flaggy Rate times the number of flags." title="Not shown in the game. How much flaggy all placed flags get per hour together: each flag fills at the Flaggy Rate, faster if a cog with a flag speed bonus covers it. Without such cogs it is just Flaggy Rate times the number of flags.">Flag speed weight</label><br />
             <input type="number" id="flagSpeed" value="0" step="0.1" style="width:6ch"></input>
           </p>
           <p>
