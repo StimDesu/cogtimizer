@@ -163,7 +163,7 @@ class Advisor {
         tr("{names}. +0.25% base build rate per box level (and Construction EXP after level 100).", { names: noBox.map(c => c.name).join(", ") }) + "\n" +
         (ordersDone >= 325
           ? tr("The box is in Shipment Unit 2 (second Upgrade tab at the post office).")
-          : tr("The box is in Shipment Unit 2, which opens after 325 completed post office orders. You have {n}, {left} to go.", { n: ordersDone, left: 325 - ordersDone })));
+          : tr("The box is in Shipment Unit 2, which opens after 325 completed post office orders. Completed so far: {n} of 325.", { n: ordersDone })));
     }
 
     // ---- Construction EXP
