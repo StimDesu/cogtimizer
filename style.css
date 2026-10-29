@@ -647,3 +647,89 @@ hr {
 .lang-select select {
     font-size: 1.6em;
 }
+
+/* Step-by-step guide under the board. */
+#stepguide {
+    color: white;
+    font-size: 11px;
+    line-height: 1.9;
+    max-width: 640px;
+    margin: .4em 0 .8em;
+}
+
+#stepguide .guide-text {
+    margin: 0 0 .5em;
+}
+
+#stepguide .guide-text b {
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    line-height: 18px;
+    border-radius: 50%;
+    background: #ffeb3b;
+    color: black;
+    text-align: center;
+}
+
+#stepguide .cogicon {
+    display: inline-block;
+    width: 28px;
+    height: 28px;
+    vertical-align: middle;
+    background-position: center;
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
+#stepguide .cogicon.empty {
+    background-image: url("assets/cog_bg.png");
+}
+
+.guide-btn {
+    font-family: inherit;
+    font-size: 11px;
+    cursor: pointer;
+    margin: 0 .5em .4em 0;
+    padding: .5em .9em;
+    color: #ffeb3b;
+    background: #3b2a17;
+    border: 2px solid black;
+}
+
+.guide-btn:hover {
+    background: #5a4123;
+}
+
+/* The two slots of the current swap: pulsing outline and a 1 / 2 badge. */
+table.cogboard tr > td.toMove {
+    outline: 3px solid #ffeb3b;
+    outline-offset: 1px;
+    z-index: 1;
+    animation: guide-pulse .8s ease-in-out infinite alternate;
+}
+
+@keyframes guide-pulse {
+    from { outline-color: #ffeb3b; }
+    to { outline-color: #ff5722; }
+}
+
+td.toMove[data-mark]::before {
+    content: attr(data-mark);
+    position: absolute;
+    top: -9px;
+    left: -9px;
+    width: 18px;
+    height: 18px;
+    line-height: 18px;
+    border-radius: 50%;
+    background: #ffeb3b;
+    color: black;
+    font-size: 11px;
+    text-align: center;
+    z-index: 3;
+}
+
+#steps > p.current {
+    background: rgba(255, 235, 59, .25);
+}

@@ -19,6 +19,7 @@ Changes in this fork:
   characters off the board or in cog makers, construction levels, Carpenter / Call Me Bob bubbles,
   construction vials, Seesaw statue, Sawsaw Salala star sign, post office box, gem shop and achievement bonuses.
 - Star signs: where the Telescope is, its quest, and the path to Chronus Cosmos / Hydron Cosmos / Sawsaw Salala.
+- "Step by step" button: shows one swap at a time with both slots highlighted and numbered, so the in-game drags are easy to follow.
 - Layout fixes: the board no longer breaks apart and the settings panel no longer covers it.
 - English and Russian interface (language switch in the top menu).
 
