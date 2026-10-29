@@ -120,6 +120,7 @@ class BoardRenderer {
     if (col.classList.contains("toMove")) {
       col.classList.remove("toMove");
     }
+    delete col.dataset.mark;
 
     if (!cog.blocked) {
       let div;
