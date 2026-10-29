@@ -471,6 +471,11 @@
             str = (Math.ceil(num / 10_000) / 100) + "M";
         } else if (abs >= 1000) {
             str = (Math.ceil(num / 10) / 100) + "K";
+        } else if (abs >= 10) {
+            str = Math.round(num);
+        } else {
+            // Exact board totals are fractional; keep one decimal for small values.
+            str = Math.round(num * 10) / 10;
         }
 
         if (addSign && num >= 0) {
