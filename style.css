@@ -733,3 +733,12 @@ td.toMove[data-mark]::before {
 #steps > p.current {
     background: rgba(255, 235, 59, .25);
 }
+
+#limitnote {
+    color: #ffeb3b;
+    font-size: 11px;
+    line-height: 1.7;
+    white-space: pre-line;
+    max-width: 640px;
+    margin: .4em 0 0;
+}
